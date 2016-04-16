@@ -25,7 +25,7 @@
 ;;;;(setf *SUPPRESS-SIMILAR-CONSTANT-REDEFINITION-WARNING* 't)        ;;;;
 ;;;;                                                                  ;;;;
 ;;;; Globally defined variables                                       ;;;;
-;;;;(defconstant +ID+ "Lauren Ogawa")                                 ;;;;
+;;;;(defconstant +ID+ "Jacob Dalton, Lauren Ogawa, Michele Takasato") ;;;;
 ;;;;                                                                  ;;;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
@@ -44,29 +44,54 @@
 ;;; This is the function that prints out a description of the current
 ;;; location using the one of the nodes above.
 (defun describe-location (location nodes)
-   (cadr (assoc location nodes)))
+	(cadr (assoc location nodes)))
 
 ;;; This is a list telling us what is connected to what. This is
 ;;; basically shaping the "room/space" of each area.
 (defparameter *edges* 
-  ;; A list defining where the user is currently at and what areas they can reach,
-  ;; where that area can be reached and how to get there. (i.e. if the user is in 
-  ;; the attic, they can reach the living room downstairs via a ladder.)
-  '((living-room (garden west door) (attic upstairs ladder) (kitchen south doorway))
-  (garden (living-room east door))
-  (attic (living-room downstairs ladder))
-  (kitchen (living-room north doorway))))
+	;; A list defining where the user is currently at and what areas they can reach,
+	;; where that area can be reached and how to get there. (i.e. if the user is in 
+	;; the attic, they can reach the living room downstairs via a ladder.)
+	'((hall1-A (hall1-B south hall))
+		(hall1-B (hall1-A north hall) (hall1-C south hall))
+		(hall1-C (hall1-B north hall) (hall1-D south hall) (room1-A east door))
+		(hall1-D (hall1-C north hall) (hall1-B east hall))
+		(hall1-E (hall1-D west hall) (hall1-F east hall))
+		(hall1-F (hall1-E west hall) (room1-B1 east hall))
+		
+		(room1-A1 (hall1-C west door) (room1-A2 north door))
+		(room1-A2 (room1-A1 south door) (room1-A3 north door))
+		(room1-A3 (room1-A2 south door))
+		
+		;; Not sure how to allow user to jump from the first floor to the second...
+		(room1-B1 (room1-B2 south door) (room1-B3 north door) (hall2-A downstairs ladder))
+		(room1-B2 (room1-B1 north door))
+		(room1-B3 (room1-B1 south door))
+		
+		;; Haven't finished doing the bottom parts
+		(hall2-A (hall1-B south door))
+		(hall2-B (hall1-B south door))
+		(hall2-C (hall1-B south door))
+		(hall2-D (hall1-B south door))
+		(hall2-E (hall1-B south door))
+		(hall2-F (hall1-B south door))
+		(hall2-G (hall1-B south door))
+		
+		(room2-A (hall1-B south door))
+		(room2-B (hall1-B south door))
+		(room2-C (hall1-B south door))
+		(room2-D (hall1-B south door))))
 
 ;;; This function puts the information in *edges* into basic sentences
 ;;; to tell the user what, where, and how to reach other areas in the
 ;;; game.
 (defun describe-path (edge)
-  `(there is a ,(caddr edge) going ,(cadr edge) from here.))
+	`(there is a ,(caddr edge) going ,(cadr edge) from here.))
 
 ;;; This function appends all the areas that can be reached from the
 ;;; current location.
 (defun describe-paths (location edges)
-  (apply #'append (mapcar #'describe-path (cdr (assoc location edges)))))
+	(apply #'append (mapcar #'describe-path (cdr (assoc location edges)))))
 
 ;;; Create all the objects that the user can pick up
 ;;; Added a multi-part object to go fishing, because I imagine that a wizard
@@ -74,38 +99,38 @@
 ;;; have to procure his own food. This wizard is probably also bored and needed
 ;;; a hobby.
 ;;; Added parts of a coffee maker so the wizard can take some coffee while fishing.
-(defparameter *objects* '(whiskey bucket frog chain water fishing-rod fishing-reel fishing-hook fishing-line coffee-pot coffee-filter coffee-brew-basket coffee-grounds))
+(defparameter *objects* '(key1 key2 key3 key4 rope board saw magical-glue salad meat))
 
 ;;; Where each object can be found
 ;;; Added a multi-part object to go fishing
 
 ;;; Add a coffee maker parts?
 (defparameter *object-locations* 
-  '((whiskey living-room)
-    (bucket living-room)
-    (fishing-rod living-room)
-    (coffee-pot living-room)
-    (fishing-reel attic)
-    (coffee-filter attic)
-    (chain garden)
-    (frog garden)
-    (fishing-hook garden)
-    (coffee-brew-basket garden)
-    (water kitchen)
-    (fishing-line kitchen)
-    (coffee-grounds kitchen)))
+	'((whiskey living-room)
+		(bucket living-room)
+		(fishing-rod living-room)
+		(coffee-pot living-room)
+		(fishing-reel attic)
+		(coffee-filter attic)
+		(chain garden)
+		(frog garden)
+		(fishing-hook garden)
+		(coffee-brew-basket garden)
+		(water kitchen)
+		(fishing-line kitchen)
+		(coffee-grounds kitchen)))
 
 ;;; This function gives a list of the visible objects at a current
 ;;; location.
 (defun objects-at (loc objs obj-loc)
-  (labels ((is-at (obj)
+	(labels ((is-at (obj)
     (eq (cadr (assoc obj obj-loc)) loc)))                 ; Check if the object is at the current location
   (remove-if-not #'is-at objs)))                        ; Remove objects not at the current location
 
 ;;; This function describes where an item is at the current location.
 (defun describe-objects (loc objs obj-loc)
-  (labels ((describe-obj (obj)
-    `(you see a ,obj on the floor.)))
+	(labels ((describe-obj (obj)
+		`(you see a ,obj on the floor.)))
    ;; If there is more than one object at the current location, we want the
    ;; the user to be able to know about that too!
    (apply #'append (mapcar #'describe-obj (objects-at loc objs obj-loc)))))
@@ -117,7 +142,7 @@
 ;;; functions. This tells the user all they need to know about the
 ;;; current location.
 (defun look ()
-  (append
+	(append
     (describe-location *location* *nodes*)                  ; Description of the current location.
     (describe-paths *location* *edges*)                   ; Where they can go from this location.
     (describe-objects *location* *objects* *object-locations*)))      ; What objects or items are at this location
@@ -126,7 +151,7 @@
 ;;; to given a direction.
 (defun walk (direction)
   (labels ((correct-way (edge)                        ; Check to see if the path exists
-    (eq (cadr edge) direction)))
+  	(eq (cadr edge) direction)))
   (let ((next (find-if #'correct-way (cdr (assoc *location* *edges*)))))
     ;; Tell the user that they can't go that way if that path does not
     ;; exist.
@@ -137,19 +162,19 @@
 
 ;;; This function allows the user to pick up an object at the current location.
 (defun pickup (object)
-  (cond ((member object (objects-at *location* *objects* *object-locations*))
-    (push (list object 'body) *object-locations*)
+	(cond ((member object (objects-at *location* *objects* *object-locations*))
+		(push (list object 'body) *object-locations*)
     ;; Let the user know if they've successfully picked up an item or not.
     `(you are now carrying the ,object))
-  (t '(you cannot get that.))))
+	(t '(you cannot get that.))))
 
 ;;; This functions gives a list of items/objects that they have picked up.
 (defun inventory ()
-  (cons 'items- (objects-at 'body *objects* *object-locations*)))
+	(cons 'items- (objects-at 'body *objects* *object-locations*)))
 
 ;;; This function tells the user whether they have a specific item or not.
 (defun have (object)
-  (member object (cdr (inventory))))
+	(member object (cdr (inventory))))
 
 ;;;; The Wizard's World Part 2
 ;;;;
@@ -172,8 +197,8 @@
 (defun game-read ()
     (let ((cmd (read-from-string (concatenate 'string "(" (read-line) ")"))))   ; Read the user's input and put's it within parentheses
          (flet ((quote-it (x)                           ; I believe this lets you quote things without having to type it
-                    (list 'quote x)))
-             (cons (car cmd) (mapcar #'quote-it (cdr cmd))))))
+         	(list 'quote x)))
+         (cons (car cmd) (mapcar #'quote-it (cdr cmd))))))
 
 ;;; These are the possible commands that the user is allowed to use.
 ;;; This prevents the user from using other commands that we don't
@@ -195,7 +220,7 @@
   ;; functions tahat call the help function
   ;(if (or (eq sexp "h") (eq sexp "?"))
     ;(eval help)                              ; If the command is h or ? then call the help function
-  
+
   (if (member (car sexp) *allowed-commands*)                  ; Check if it's within the allowed parameters
     (eval sexp)                               ; Evaluates the command
     '(i do not know that command.)))                    ; Return this if it's not within the parameters
@@ -203,9 +228,9 @@
 ;;; This function helps the game-print function with editing the
 ;;; responses printed to the user.
 (defun tweak-text (lst caps lit)
-  (when lst
-    (let ((item (car lst))
-          (rest (cdr lst)))
+	(when lst
+		(let ((item (car lst))
+			(rest (cdr lst)))
       (cond ((eql item #\space) (cons item (tweak-text rest caps lit)))       ; Appropriate spacing
             ((member item '(#\! #\? #\.)) (cons item (tweak-text rest t lit)))    ; Is it a ! ? or . for proper punctuation
             ((eql item #\") (tweak-text rest caps (not lit)))
@@ -217,8 +242,8 @@
 ;;; them so that it looks better when playing the program.
 ;;; This gives it a better overall look when playing.
 (defun game-print (lst)
-    (princ (coerce (tweak-text (coerce (string-trim "() " (prin1-to-string lst)) 'list) t nil) 'string))
-    (fresh-line))
+	(princ (coerce (tweak-text (coerce (string-trim "() " (prin1-to-string lst)) 'list) t nil) 'string))
+	(fresh-line))
 
 
 ;;;; The Wizard's World Part 3
@@ -230,13 +255,13 @@
 ;;; This macro allows the user to do certain actions with the
 ;;; in-game objects
 (defmacro game-action (command subj obj place &body body)
-  `(progn (defun ,command (subject object)
-    (if (and (eq *location* ',place)
-      (eq subject ',subj)
-      (eq object ',obj)
-      (have ',subj))
-    ,@body
-    '(i cant ,command like that.)))
+	`(progn (defun ,command (subject object)
+		(if (and (eq *location* ',place)
+			(eq subject ',subj)
+			(eq object ',obj)
+			(have ',subj))
+		,@body
+		'(i cant ,command like that.)))
   ;; Make sure that each action's command is added to the list
   ;; of actions the user can use.
   (pushnew ',command *allowed-commands*)))
@@ -247,11 +272,11 @@
 
 ;;; Action that welds the chain and bucket together
 (game-action weld chain bucket attic
-  (if (and (have 'bucket) (not *chain-welded*))
+	(if (and (have 'bucket) (not *chain-welded*))
     ;; Make sure that the game knows completed
     ;; the welding and tells the user too
     (progn (setf *chain-welded* 't)
-      '(the chain is now securely welded to the bucket.))
+    	'(the chain is now securely welded to the bucket.))
     '(you do not have a bucket.)))
 
 ;;; Basically check if the bucket if full of water or not.
@@ -259,22 +284,22 @@
 
 ;;; Action to get water from the well in the garden
 (game-action dunk bucket well garden
-  (if *chain-welded* 
-    (progn (setf *bucket-filled* 't)
-      '(the bucket is now full of water))
-    '(the water level is too low to reach.)))
+	(if *chain-welded* 
+		(progn (setf *bucket-filled* 't)
+			'(the bucket is now full of water))
+		'(the water level is too low to reach.)))
 
 ;;; Action to wake up the wizard
 (game-action splash bucket wizard living-room
-  (cond ((not *bucket-filled*) '(the bucket has nothing in it.))
+	(cond ((not *bucket-filled*) '(the bucket has nothing in it.))
     ;; Lose the game if you picked up the frog
     ((have 'frog) '(the wizard awakens and sees that you stole his frog. 
-      he is so upset he banishes you to the 
-      netherworlds- you lose! the end.))
+    	he is so upset he banishes you to the 
+    	netherworlds- you lose! the end.))
     ;; If you didn't touch the wizard's frog you get a donut.
     ;; Basically "win" the game.
     (t '(the wizard awakens from his slumber and greets you warmly. 
-      he hands you the magic low-carb donut- you win! the end.))))
+    	he hands you the magic low-carb donut- you win! the end.))))
 
 ;;;; New action to put together my multi-part object
 
@@ -287,19 +312,19 @@
 ;;; This is basically the same as the game-action macro above but
 ;;; slightly edited
 (defmacro game-action-multi (command obj place &body body)
-  `(progn (defun ,command (object)
+	`(progn (defun ,command (object)
     ;; So this is where I really changed things. Make
     ;; sure that the second arg is a list. Doesn't matter
     ;; how many items as long as it's a list
     (if (and (eq *location* ',place)
-      (subsetp ,obj object)
+    	(subsetp ,obj object)
       (listp object))         ; Make sure that the second argument is a list.
     ,@body
     ;; Make sure that the user knows what went wrong so that
     ;; they can make changes.
     '(i cant ,command like that.
-      The argument after ,command should be a list.)))
-  (pushnew ',command *allowed-commands*)))
+    	The argument after ,command should be a list.)))
+	(pushnew ',command *allowed-commands*)))
 
 ;;; Basically check if the fishing rod has been put together or not.
 (defparameter *fishing-rod-built* nil)
@@ -313,17 +338,17 @@
   ;; Check if you have all the items needed, if you don't tell the user
   ;; what they are missing.
   (cond 
-    ((eq *fishing-rod-built* t)
-      (game-print '(you put the fishing rod together already.)))
-    ((not (have 'fishing-rod))
-      (game-print '(you do not have a fishing rod.)))
-    ((not (have 'fishing-reel))
-      (game-print '(you do not have a fishing reel.)))
-    ((not (have 'fishing-hook))
-      (game-print '(you do not have a fishing hook.)))
-    ((not (have 'fishing-line))
-      (game-print '(you do not have a fishing line.)))
-    
+  	((eq *fishing-rod-built* t)
+  		(game-print '(you put the fishing rod together already.)))
+  	((not (have 'fishing-rod))
+  		(game-print '(you do not have a fishing rod.)))
+  	((not (have 'fishing-reel))
+  		(game-print '(you do not have a fishing reel.)))
+  	((not (have 'fishing-hook))
+  		(game-print '(you do not have a fishing hook.)))
+  	((not (have 'fishing-line))
+  		(game-print '(you do not have a fishing line.)))
+
     ;; If they have everything build the fishing rod
     (t (progn (setf *fishing-rod-built* 't)
       ;; Remove all the parts of the fishing rod
@@ -331,7 +356,7 @@
       (setf *objects* (remove 'fishing-hook *objects*))
       (setf *objects* (remove 'fishing-line *objects*))
       '(the fishing rod is now put together.
-        You can now go fishing for food.)))))
+      	You can now go fishing for food.)))))
 
 ;;; Basically check if the coffee maker has been put together or not.
 (defparameter *make-coffee* nil)
@@ -341,18 +366,18 @@
   ;; Check if you have all the items needed, if you don't tell the user
   ;; what they are missing.
   (cond 
-    ((eq *make-coffee* t)
-      (game-print '(you put the coffee maker together already.)))
-    ((not (have 'coffee-pot))
-      (game-print '(you do not have a coffee pot.)))
-    ((not (have 'coffee-filter))
-      (game-print '(you do not have a coffee filter.)))
-    ((not (have 'coffee-brew-basket))
-      (game-print '(you do not have a coffee brew basket.)))
-    ((not (have 'water))
-      (game-print '(you do not have water.)))
-    ((not (have 'coffee-grounds))
-      (game-print '(you do not have coffee grounds.)))
+  	((eq *make-coffee* t)
+  		(game-print '(you put the coffee maker together already.)))
+  	((not (have 'coffee-pot))
+  		(game-print '(you do not have a coffee pot.)))
+  	((not (have 'coffee-filter))
+  		(game-print '(you do not have a coffee filter.)))
+  	((not (have 'coffee-brew-basket))
+  		(game-print '(you do not have a coffee brew basket.)))
+  	((not (have 'water))
+  		(game-print '(you do not have water.)))
+  	((not (have 'coffee-grounds))
+  		(game-print '(you do not have coffee grounds.)))
     ;; If they have everything build the coffee maker
     (t (progn (setf *make-coffee* 't)
 
@@ -371,7 +396,7 @@
       (setf *objects* (remove 'coffee-grounds *objects*))
       
       '(you can now have a cup of coffee.
-        this is the only cup of coffee you can have.)))))
+      	this is the only cup of coffee you can have.)))))
 
 ;;; Was going to separate the action of putting the coffee maker
 ;;; together and brewing a cup of coffee but then I would have to
@@ -389,7 +414,7 @@
 ;;; are allowed to use. h and ? are other commmands that the user can use to
 ;;; call this function.
 (defun help ()
-  (terpri)
+	(terpri)
   ;; Using the game-print function to make sure that everything prints out
   ;; nicely. Tried to get rid of the printed nil, but couldn't...
   (game-print '(please enter quit or one of the following commands)) 
@@ -401,10 +426,10 @@
 ;;; command.
 ;;; All these functions do is call the help function...
 (defun h ()
-  (help))
+	(help))
 
 (defun ? ()
-  (help))
+	(help))
 
 ;;;; Macro's to make creating the game easier
 ;;;; Used the following site to look up how the push function works
@@ -413,65 +438,65 @@
 
 ;;; This macro makes adding new objects to the game easier. 
 (defmacro new-object (object location)
-  `(cond
+	`(cond
     ;; Make sure that it doesn't already exist in the game.
     ;; If it exists let the user know
     ((member ',object *objects*)
-      '(the ,object already exists.))
+    	'(the ,object already exists.))
     ;; Make sure that the location where you want to create
     ;; and put the object exists too
     ;; Had to re-look up assoc. Used the following site:
     ;; http://clhs.lisp.se/Body/f_assocc.htm
     ((not (assoc ',location *nodes*))
-      '(the ,location does not exist.))
+    	'(the ,location does not exist.))
     ;; If the object doesn't yet exist and the location
     ;; exists create the new object in the location
     ;; Let the user know that the object was created
     ((push ',object *objects*)
-      (push '(,object ,location) *object-locations*)
-      '(the ,object was added to the ,location ))))
+    	(push '(,object ,location) *object-locations*)
+    	'(the ,object was added to the ,location ))))
 
 ;;; This macro makes adding a new location to the game easier.
 (defmacro new-location (location &body body)
-  `(cond
+	`(cond
     ;; Check to make sure that the location doesn't already
     ;; exist and let the user know if it does.
     ((assoc ',location *nodes*)
-      '(I'm sorry but that location already exists.))
+    	'(I'm sorry but that location already exists.))
     ;; Make sure that there is a description to go with the
     ;; new location so that we can immerse ourselves in the 
     ;; game play
     ((null ',body)
-      '(You need a description of the new location.))
+    	'(You need a description of the new location.))
     ;; If the location doesn't yet exist add it to the 
     ;; nodes and edges parameters
     ;; Also let the user know that the location has 
     ;; been added
     ((push '(,location (,@body)) *nodes*)
-      (push '(,location) *edges*)
-      '(the ,location location was added.))))
+    	(push '(,location) *edges*)
+    	'(the ,location location was added.))))
 
 ;;; This macro creates a path from one location to another.
 ;;; I know we were supposed to be able to make 2-way paths and 1-way paths...
 ;;; Sadly I was only able to make it create a single path at a time. So if the
 ;;; user wants a 2-way path they have to do this macro twice.
 (defmacro new-path (start direction destination via)
-  `(cond
+	`(cond
     ;; Make sure both locations exist and if not let the user know.
     ((not (or (assoc ',start *nodes*) (assoc ',destination *nodes*)))
-      '(I'm sorry but one or both of the locations do not exist.))
+    	'(I'm sorry but one or both of the locations do not exist.))
     
     ;; Make sure that the path they want to create doesn't already exist
     ;; Used the following site for the code below since assoc wasn't cutting
     ;; it for making sure the path didn't already exist.
     ;; http://www2.hawaii.edu/~jgarces/ICS313/jgarces5/jgarces5.lisp
     ((member ',direction (mapcar #'cadr (cdr (assoc ',start *edges*))))
-      '(I'm sorry but that path already exists.))
+    	'(I'm sorry but that path already exists.))
 
     ;; If both locations exist and a path doesn't already exist between them
     ;; create a path.
     ((nconc (assoc ',start *edges*) (list (list ',destination ',direction ',via)))
-      '(the new via was added.))
+    	'(the new via was added.))
 
     ;; Probably needs some sort of loop to change the direction to the opposite one
     ;; but I wasn't too sure how to make it optional so that the user has to the 
