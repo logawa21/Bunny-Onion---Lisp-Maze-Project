@@ -260,7 +260,7 @@
 ;;; This prevents the user from using other commands that we don't
 ;;; want them to use.
 ;;; Added more commands (help h ?) that the user is able to use.
-(defparameter *allowed-commands* '(look walk pickup inventory help h ?))
+(defparameter *allowed-commands* '(look walk pickup inventory help h ? unlock eat))
 
 ;;; This function evaluates the input from the user and checks if it's
 ;;; in the list of allowed commands. Else it prints out a comment
@@ -330,6 +330,16 @@
 (defparameter *unlocked2* nil)
 (defparameter *unlocked3* nil)
 (defparameter *unlocked4* nil)
+(defparameter *eaten* nil)
+
+;;;; action to eat salad
+(game-action eat salad myself room2-A4
+	(if (and (have 'salad) (not *eaten*))
+    ;; Make sure that the game knows completed
+    ;; 
+    (progn (setf *eaten* 't)
+    	'(you have eaten the salad))
+    '(you either do not have the salad or are not in room2-A4.)))
 
 ;;;; action to unlock door at hall2-D3  room2-b1
 (game-action unlock key1 lock1 hall2-D3
