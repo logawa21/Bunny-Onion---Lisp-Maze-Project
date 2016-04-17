@@ -289,149 +289,55 @@
   ;; of actions the user can use.
   (pushnew ',command *allowed-commands*)))
 
-;;; Basically check if the chain and bucker have been put
-;;; together or not.
-(defparameter *chain-welded* nil)
+;;; Basically check if the rope has been cut into two pieces
+(defparameter *two-ropes* nil)
 
-;;; Action that welds the chain and bucket together
-(game-action weld chain bucket attic
-	(if (and (have 'bucket) (not *chain-welded*))
+;;; Action that cuts the rope using the saw
+(game-action cut saw rope room1-D4
+	(if (and (have 'rope) (not *two-ropes*))
     ;; Make sure that the game knows completed
-    ;; the welding and tells the user too
-    (progn (setf *chain-welded* 't)
-    	'(the chain is now securely welded to the bucket.))
-    '(you do not have a bucket.)))
+    ;; the cutting and tells the user too
+    (progn (setf *two-ropes* 't)
+    	'(the rope is now cut into two pieces.))
+    '(you do not have a rope or a saw.)))
 
-;;; Basically check if the bucket if full of water or not.
-(defparameter *bucket-filled* nil)
+;;; Basically check if the board has been cut into multiple pieces
+(defparameter *board-pieces* nil)
 
-;;; Action to get water from the well in the garden
-(game-action dunk bucket well garden
-	(if *chain-welded* 
-		(progn (setf *bucket-filled* 't)
-			'(the bucket is now full of water))
-		'(the water level is too low to reach.)))
+;;; Action that cuts the board into pieces
+(game-action cut saw board room1-D4
+	(if (and (have 'board) (not *board-pieces*))
+    ;; Make sure that the game knows completed
+    ;; the cutting and tells the user too
+    (progn (setf *board-pieces* 't)
+    	'(the board is now cut into multiple pieces.))
+    '(you do not have a board or a saw.)))
 
-;;; Action to wake up the wizard
-(game-action splash bucket wizard living-room
-	(cond ((not *bucket-filled*) '(the bucket has nothing in it.))
-    ;; Lose the game if you picked up the frog
-    ((have 'frog) '(the wizard awakens and sees that you stole his frog. 
-    	he is so upset he banishes you to the 
-    	netherworlds- you lose! the end.))
+;;; Basically check if the ladder has been created
+(defparameter *ladder* nil)
+
+;;; Not sure it I can have two items in the have....will have to test
+;;; Error problem
+;;; Action that creates the ladder
+(game-action create two-ropes board-pieces room1-D4
+	(if (and (have 'two-ropes 'board-pieces) (not *ladder*))
+    ;; Make sure that the game knows completed
+    ;; putting the ladder together and tells the user too
+    (progn (setf *ladder* 't)
+    	'(the two-ropes and board-pieces have become a ladder.))
+    '(you do not have two-ropes or board-pieces.)))
+
+;;; This is to put the ladder in place... I will have to change this
+;(game-action ladder hall1-D4
+;	(cond ((not *ladder*) '(the bucket has nothing in it.))
+;     ;; Lose the game if you picked up the frog
+;    ((have 'frog) '(the wizard awakens and sees that you stole his frog. 
+;    	he is so upset he banishes you to the 
+;    	netherworlds- you lose! the end.))
     ;; If you didn't touch the wizard's frog you get a donut.
     ;; Basically "win" the game.
-    (t '(the wizard awakens from his slumber and greets you warmly. 
-    	he hands you the magic low-carb donut- you win! the end.))))
-
-;;;; New action to put together my multi-part object
-
-;;; Created a new macro action because we needed a list of the
-;;; multi-part object and I couldn't figure out how to make
-;;; game-action accept a list... so I basically created a duplicate
-;;; macro that can take a list.
-;;; I'm also pretty sure there's an easier way to do this, but I'm
-;;; also feeling lazy...
-;;; This is basically the same as the game-action macro above but
-;;; slightly edited
-(defmacro game-action-multi (command obj place &body body)
-	`(progn (defun ,command (object)
-    ;; So this is where I really changed things. Make
-    ;; sure that the second arg is a list. Doesn't matter
-    ;; how many items as long as it's a list
-    (if (and (eq *location* ',place)
-    	(subsetp ,obj object)
-      (listp object))         ; Make sure that the second argument is a list.
-    ,@body
-    ;; Make sure that the user knows what went wrong so that
-    ;; they can make changes.
-    '(i cant ,command like that.
-    	The argument after ,command should be a list.)))
-	(pushnew ',command *allowed-commands*)))
-
-;;; Basically check if the fishing rod has been put together or not.
-(defparameter *fishing-rod-built* nil)
-
-;;; Put together the fishing rod so that they user can now fish...in the
-;;; well? I probably should have created another area to allow the user
-;;; to actually fish but again too lazy. So I guess they just have to fish
-;;; in the well. Although there are probably alternative uses for a fishing
-;;; rod.
-(game-action-multi build '(fishing-rod fishing-reel fishing-hook fishing-line) garden
-  ;; Check if you have all the items needed, if you don't tell the user
-  ;; what they are missing.
-  (cond 
-  	((eq *fishing-rod-built* t)
-  		(game-print '(you put the fishing rod together already.)))
-  	((not (have 'fishing-rod))
-  		(game-print '(you do not have a fishing rod.)))
-  	((not (have 'fishing-reel))
-  		(game-print '(you do not have a fishing reel.)))
-  	((not (have 'fishing-hook))
-  		(game-print '(you do not have a fishing hook.)))
-  	((not (have 'fishing-line))
-  		(game-print '(you do not have a fishing line.)))
-
-    ;; If they have everything build the fishing rod
-    (t (progn (setf *fishing-rod-built* 't)
-      ;; Remove all the parts of the fishing rod
-      (setf *objects* (remove 'fishing-reel *objects*))
-      (setf *objects* (remove 'fishing-hook *objects*))
-      (setf *objects* (remove 'fishing-line *objects*))
-      '(the fishing rod is now put together.
-      	You can now go fishing for food.)))))
-
-;;; Basically check if the coffee maker has been put together or not.
-(defparameter *make-coffee* nil)
-
-;;; Put together the coffee maker to make some coffee.
-(game-action-multi make '(coffee-pot coffee-filter coffee-brew-basket water coffee-grounds) kitchen
-  ;; Check if you have all the items needed, if you don't tell the user
-  ;; what they are missing.
-  (cond 
-  	((eq *make-coffee* t)
-  		(game-print '(you put the coffee maker together already.)))
-  	((not (have 'coffee-pot))
-  		(game-print '(you do not have a coffee pot.)))
-  	((not (have 'coffee-filter))
-  		(game-print '(you do not have a coffee filter.)))
-  	((not (have 'coffee-brew-basket))
-  		(game-print '(you do not have a coffee brew basket.)))
-  	((not (have 'water))
-  		(game-print '(you do not have water.)))
-  	((not (have 'coffee-grounds))
-  		(game-print '(you do not have coffee grounds.)))
-    ;; If they have everything build the coffee maker
-    (t (progn (setf *make-coffee* 't)
-
-      ;; Create the coffee maker object and make sure that its
-      ;; in the inventory
-      ;; Single cup of coffee the user will ever have in this
-      ;; game.
-      (new-object coffee kitchen)
-      (pickup 'coffee)
-
-      ;; Remove all the parts of the coffee maker
-      (setf *objects* (remove 'coffee-pot *objects*))
-      (setf *objects* (remove 'coffee-filter *objects*))
-      (setf *objects* (remove 'coffee-brew-basket *objects*))
-      (setf *objects* (remove 'water *objects*))
-      (setf *objects* (remove 'coffee-grounds *objects*))
-      
-      '(you can now have a cup of coffee.
-      	this is the only cup of coffee you can have.)))))
-
-;;; Was going to separate the action of putting the coffee maker
-;;; together and brewing a cup of coffee but then I would have to
-;;; take into account that you could probably pour more coffee and
-;;; that seemed unnecessary so now the user can only have that single
-;;; cup of coffee.
-;(defparameter *brew-coffee* nil)
-
-;(game-action brew coffee coffee-maker kitchen
-;   (if *brew-coffee* 
-;     (progn (setf *brew-coffee* 't)
-;     '(the coffee is now made))))
+;    (t '(the wizard awakens from his slumber and greets you warmly. 
+;    	he hands you the magic low-carb donut- you win! the end.))))
 
 ;;; This function helps the user by giving them a list of commands that they
 ;;; are allowed to use. h and ? are other commmands that the user can use to
