@@ -58,20 +58,25 @@
 	;; Hallway
 	'((hall1-A1 (hall1-1B south hall))
 		(hall1-B1 (hall1-A1 north hall) (hall1-C1 south hall))
+		;;contains the rope
 		(hall1-C1 (hall1-B1 north hall) (hall1-D1 south hall) (room1-C2 east door))
 		(hall1-D1 (hall1-C1 north hall) (hall1-D2 east hall))
+		;;contains the saw
 		(hall1-D2 (hall1-D1 west hall) (hall1-D3 east hall))
 		(hall1-D3 (hall1-D2 west hall) (room1-D4 east hall))
 		
 		;; First room, locked need key
 		(room1-C2 (hall1-C1 west door) (room1-B2 north door))
 		(room1-B2 (room1-C2 south door) (room1-A2 north door))
+		;;contains room2-E3 key/key3
 		(room1-A2 (room1-B2 south door))
 		
 		;; Not sure how to allow user to jump from the first floor to the second...
 		;; End of the first floor and the room to get to the second floor via ladder
 		(room1-D4 (hall1-D3 west door) (room1-C4 north door) (room1-E4 south door) (hall2-D4 downstairs ladder))
+		;;contains glue
 		(room1-C4 (room1-D4 north door))
+		;;contains board
 		(room1-E4 (room1-D4 south door))
 		
 		;;; This is the second floor
@@ -85,17 +90,20 @@
 		(hall2-B3 (hall2-B2 west hall) (hall2-B4 east hall))
 		(hall2-B4 (hall2-B3 west hall) (room2-A4 north door) (room2-A4 north hall))
 		
-		;; Small closet room, also locked
+		;; Small closet room, also locked, contains hall1-A1 key/key4
 		(room2-E3 (hall2-D3 north door))
 		
 		;; Next room contains a key and trap object... I think it was weapons to
 		;; "slay" the dragon
 		(room2-C1 (hall2-C2 east door) (room2-D1 south door) (room2-B1 north door))
+		;;contains weapons
 		(room2-D1 (room2-C1 north door))
+		;;contains hall2-E3 key/key1
 		(room2-B1 (room2-C1 south door))
 
 		;; This is a smaller room on the second floor, contains a key
 		(room2-A2 (hall2-B2 south door) (room2-A1 west door))
+		;;contains hall1-C2 key/key2
 		(room2-A1 (room2-A2 east door))
 
 		;; The salad
@@ -122,23 +130,18 @@
 (defparameter *objects* '(key1 key2 key3 key4 rope board saw magical-glue salad weapons))
 
 ;;; Where each object can be found
-;;; Added a multi-part object to go fishing
 
-;;; Add a coffee maker parts?
 (defparameter *object-locations* 
-	'((whiskey living-room)
-		(bucket living-room)
-		(fishing-rod living-room)
-		(coffee-pot living-room)
-		(fishing-reel attic)
-		(coffee-filter attic)
-		(chain garden)
-		(frog garden)
-		(fishing-hook garden)
-		(coffee-brew-basket garden)
-		(water kitchen)
-		(fishing-line kitchen)
-		(coffee-grounds kitchen)))
+	'((rope hall1-C1)
+		(saw hall1-D2)
+		(magical-glue room1-C4)
+		(board room1-E4)
+		(weapons room2-D1)
+		(key1 room2-B1)
+		(key2 room2-A1)
+		(key3 room1-A2)
+		(salad room2-A4)
+		(key4 room2-E3)))
 
 ;;; This function gives a list of the visible objects at a current
 ;;; location.
@@ -155,8 +158,8 @@
    ;; the user to be able to know about that too!
    (apply #'append (mapcar #'describe-obj (objects-at loc objs obj-loc)))))
 
-;;; The user starts out in the living room every time.
-(defparameter *location* 'living-room)
+;;; The user starts out in hall1-A1 every time.
+(defparameter *location* 'hall1-A1)
 
 ;;; This function basically compiles all the information from previous
 ;;; functions. This tells the user all they need to know about the
