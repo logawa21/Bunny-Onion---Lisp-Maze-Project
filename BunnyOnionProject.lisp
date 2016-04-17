@@ -340,6 +340,14 @@
     (progn (setf *eaten* 't)
     	'(you have eaten the salad))
     '(you either do not have the salad or are not in room2-A4.)))
+    
+;;;; Action that tries to "slay" the dragon
+;;;;needs testing
+(game-action slay weapons dragon hall1-A1
+	(cond 
+	(not(have 'weapons) '(you do not have weapons to slay the dragon with!))
+	(t '(you try to slay the dragon, but he's grumpy! H'es too powerful and you lose. The end.)
+    )))
 
 ;;;; action to unlock door at hall2-D3  room2-b1
 (game-action unlock key1 lock1 hall2-D3
