@@ -52,35 +52,55 @@
 	;; A list defining where the user is currently at and what areas they can reach,
 	;; where that area can be reached and how to get there. (i.e. if the user is in 
 	;; the attic, they can reach the living room downstairs via a ladder.)
-	'((hall1-A (hall1-B south hall))
-		(hall1-B (hall1-A north hall) (hall1-C south hall))
-		(hall1-C (hall1-B north hall) (hall1-D south hall) (room1-A east door))
-		(hall1-D (hall1-C north hall) (hall1-B east hall))
-		(hall1-E (hall1-D west hall) (hall1-F east hall))
-		(hall1-F (hall1-E west hall) (room1-B1 east hall))
+	
+	;;; This is the first floor
+
+	;; Hallway
+	'((hall1-A1 (hall1-1B south hall))
+		(hall1-B1 (hall1-A1 north hall) (hall1-C1 south hall))
+		(hall1-C1 (hall1-B1 north hall) (hall1-D1 south hall) (room1-C2 east door))
+		(hall1-D1 (hall1-C1 north hall) (hall1-D2 east hall))
+		(hall1-D2 (hall1-D1 west hall) (hall1-D3 east hall))
+		(hall1-D3 (hall1-D2 west hall) (room1-D4 east hall))
 		
-		(room1-A1 (hall1-C west door) (room1-A2 north door))
-		(room1-A2 (room1-A1 south door) (room1-A3 north door))
-		(room1-A3 (room1-A2 south door))
+		;; First room, locked need key
+		(room1-C2 (hall1-C1 west door) (room1-B2 north door))
+		(room1-B2 (room1-C2 south door) (room1-A2 north door))
+		(room1-A2 (room1-B2 south door))
 		
 		;; Not sure how to allow user to jump from the first floor to the second...
-		(room1-B1 (room1-B2 south door) (room1-B3 north door) (hall2-A downstairs ladder))
-		(room1-B2 (room1-B1 north door))
-		(room1-B3 (room1-B1 south door))
+		;; End of the first floor and the room to get to the second floor via ladder
+		(room1-D4 (hall1-D3 west door) (room1-C4 north door) (room1-E4 south door) (hall2-D4 downstairs ladder))
+		(room1-C4 (room1-D4 north door))
+		(room1-E4 (room1-D4 south door))
 		
-		;; Haven't finished doing the bottom parts
-		(hall2-A (hall1-B south door))
-		(hall2-B (hall1-B south door))
-		(hall2-C (hall1-B south door))
-		(hall2-D (hall1-B south door))
-		(hall2-E (hall1-B south door))
-		(hall2-F (hall1-B south door))
-		(hall2-G (hall1-B south door))
+		;;; This is the second floor
+
+		;; Second floor hallway
+		(hall2-D4 (hall2-D3 west hall))
+		(hall2-D3 (hall2-D4 east hall) (hall2-D2 west hall) (room2-E3 south door))
+		(hall2-D2 (hall2-D3 east hall) (hall2-C2 north hall))
+		(hall2-C2 (hall2-D2 south hall) (hall2-B2 north hall) (room2-C1 west hall))
+		(hall2-B2 (hall2-C2 south hall) (hall2-B3 east hall) (room2-A2 north hall))
+		(hall2-B3 (hall2-B2 west hall) (hall2-B4 east hall))
+		(hall2-B4 (hall2-B3 west hall) (room2-A4 north door) (room2-A4 north hall))
 		
-		(room2-A (hall1-B south door))
-		(room2-B (hall1-B south door))
-		(room2-C (hall1-B south door))
-		(room2-D (hall1-B south door))))
+		;; Small closet room, also locked
+		(room2-E3 (hall2-D3 north door))
+		
+		;; Next room contains a key and trap object... I think it was weapons to
+		;; "slay" the dragon
+		(room2-C1 (hall2-C2 east door) (room2-D1 south door) (room2-B1 north door))
+		(room2-D1 (room2-C1 north door))
+		(room2-B1 (room2-C1 south door))
+
+		;; This is a smaller room on the second floor, contains a key
+		(room2-A2 (hall2-B2 south door) (room2-A1 west door))
+		(room2-A1 (room2-A2 east door))
+
+		;; The salad
+		(room2-A4 (hall2-B4 south door))
+		))
 
 ;;; This function puts the information in *edges* into basic sentences
 ;;; to tell the user what, where, and how to reach other areas in the
@@ -99,7 +119,7 @@
 ;;; have to procure his own food. This wizard is probably also bored and needed
 ;;; a hobby.
 ;;; Added parts of a coffee maker so the wizard can take some coffee while fishing.
-(defparameter *objects* '(key1 key2 key3 key4 rope board saw magical-glue salad meat))
+(defparameter *objects* '(key1 key2 key3 key4 rope board saw magical-glue salad weapons))
 
 ;;; Where each object can be found
 ;;; Added a multi-part object to go fishing
