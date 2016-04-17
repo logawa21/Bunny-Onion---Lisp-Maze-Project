@@ -53,6 +53,7 @@
   (room2-D1 (you are in the room))
   (room2-E3 (you are in the room))
 
+
   ;; hallway nodes for the first floor
   (hall1-A1 (you are in the hallway))
   (hall1-B1 (you are in the hallway))
@@ -61,8 +62,15 @@
   (hall1-D2 (you are in the hallway))
   (hall1-D3 (you are in the hallway))
 
+
   ;; hallway nodes for the second floor
-  
+  (hall2-B2 ())
+  (hall2-B3 ())
+  (hall2-C2 ())
+  (hall2-D2 ())
+  (hall2-D3 ())
+  (hall2-D4 ())
+  (hall2-E3 ())
   ))               ; The Kitchen
 
 ;;; This is the function that prints out a description of the current
