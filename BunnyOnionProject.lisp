@@ -323,6 +323,17 @@
 
 ;;; Basically check if the rope has been cut into two pieces
 (defparameter *two-ropes* nil)
+(defparameter *unlocked3* nil)
+
+;;;; action to unlock door
+(game-action unlock key3 lock3 hall1-C1
+	(if (and (have 'key3) (not *unlocked3*))
+    ;; Make sure that the game knows completed
+    ;; 
+    (progn (setf *unlocked3* 't)
+    	'(the door to room1-C2 has been unlocked))
+    '(you do not have key3.)))
+
 
 ;;; Action that cuts the rope using the saw
 (game-action cut saw rope room1-D4
