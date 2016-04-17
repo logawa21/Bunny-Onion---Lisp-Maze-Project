@@ -323,7 +323,12 @@
 
 ;;; Basically check if the rope has been cut into two pieces
 (defparameter *two-ropes* nil)
+
+;;;; parameters to check if door is unlocked
+(defparameter *unlocked1* nil)
+(defparameter *unlocked2* nil)
 (defparameter *unlocked3* nil)
+(defparameter *unlocked4* nil)
 
 ;;;; action to unlock door
 (game-action unlock key3 lock3 hall1-C1
