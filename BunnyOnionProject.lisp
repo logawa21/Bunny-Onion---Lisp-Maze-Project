@@ -169,11 +169,11 @@
 		(magical-glue room1-C4)
 		(board room1-E4)
 		(weapons room2-D1)
-		(key1 room2-B1)
-		(key2 room2-A1)
-		(key3 room1-A2)
-		(salad room2-A4)
-		(key4 room2-E3)))
+		(key1 room2-B1)     ;; key for 
+		(key2 room2-A1)     ;; key for hall1-C1 to enter room1-C2
+		(key3 room1-A2)     ;; key for hall2-B4 to enter room2-A4
+		(salad room2-A4)    
+		(key4 room2-E3)))   ;; key for hall1-A1 to exit game
 
 ;;; This function gives a list of the visible objects at a current
 ;;; location.
@@ -330,15 +330,41 @@
 (defparameter *unlocked3* nil)
 (defparameter *unlocked4* nil)
 
-;;;; action to unlock door
-(game-action unlock key3 lock3 hall1-C1
+;;;; action to unlock door at hall2-D3  room2-b1
+(game-action unlock key1 lock1 hall2-D3
+	(if (and (have 'key1) (not *unlocked1*))
+    ;; Make sure that the game knows completed
+    ;; 
+    (progn (setf *unlocked1* 't)
+    	'(the door to room2-E3 has been unlocked))
+    '(you do not have key1.)))
+
+;;;; action to unlock door at hall1-C1
+(game-action unlock key2 lock2 hall1-C1
+	(if (and (have 'key2) (not *unlocked2*))
+    ;; Make sure that the game knows completed
+    ;; 
+    (progn (setf *unlocked2* 't)
+    	'(the door to room1-C2 has been unlocked))
+    '(you do not have key2.)))
+
+;;;; action to unlock door at hall2-B4
+(game-action unlock key3 lock3 hall2-B4
 	(if (and (have 'key3) (not *unlocked3*))
     ;; Make sure that the game knows completed
     ;; 
     (progn (setf *unlocked3* 't)
-    	'(the door to room1-C2 has been unlocked))
+    	'(the door to room2-A4 has been unlocked))
     '(you do not have key3.)))
 
+;;;; action to unlock door at hall1-A1
+(game-action unlock key4 lock4 hall1-A1
+	(if (and (have 'key4) (not *unlocked4*))
+    ;; Make sure that the game knows completed
+    ;; 
+    (progn (setf *unlocked4* 't)
+    	'(The exit has been unlocked.))
+    '(you do not have key4.)))
 
 ;;; Action that cuts the rope using the saw
 (game-action cut saw rope room1-D4
