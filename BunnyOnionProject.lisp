@@ -37,29 +37,27 @@
 (defparameter *nodes* 
   ;; Basically a list of places and a short blurb about that area.
   ;; rooms for the first floor
-  '((room1-A2 (You are in a room filled with books, papers littering the floor. You wonder what could have happened here.))       
+  '((room1-A2 (You are in a room filled with books with papers littering the floor. You wonder what could have happened here.))       
   (room1-B2 (You are in a small dimly lit room. Nothing catches your eye in particular.))             
-  (room1-C2 (You are in a dark room with al the draperies closed. You pull them aside, peering out the window.
-  	     You see another tower.))           
+  (room1-C2 (You are in a dark room with al the draperies closed. You pull them aside and peer out the window. You see another tower.))           
   (room1-C4 (You are in a well lit room. You look out the window to see another tower with dark windows.))
   (room1-D4 (you are in a room with a hole in the floor.))
   (room1-E4 (you are in a room filled with portraits... none of them look familiar.))
 
   ;; rooms for the second floow
-  (room2-A1 (you are in a very dark room. What is that funny smell? You inch forward, the hair rises on the back of
-  		your neck as your foot hits something.))
+  (room2-A1 (you are in a very dark room with a strange smell coming from somewhere. You inch forward. The hair rises on the back of your neck as your foot hits something.))
   (room2-A2 (you are in a dimly lit room. The air is very still.))
   (room2-A4 (you are in a kitchen.))
   (room2-B1 (you are in some sort of dungeon.))
   (room2-C1 (you are in a room with many doors.))
-  (room2-D1 (you are in the room with a furnace, but no fire. ))
+  (room2-D1 (you are in the room with a furnace but there is no fire. ))
   (room2-E3 (you find yourself in a room glowing with treasures. You realize you dont have pockets...))
 
 
   ;; hallway nodes for the first floor
   (hall1-A1 (You are facing a dragon which is blocking your only exit.))
-  (hall1-B1 (you are at the beginning of a long hallway. You can feel the dragon's eyes on you.))
-  (hall1-C1 (you are in the middle of a long hallway. You look out the windows to see a lake, glittering in the sunlight.))
+  (hall1-B1 (you are at the beginning of a long hallway. You can feel the dragons eyes on you.))
+  (hall1-C1 (you are in the middle of a long hallway. You look out the windows to see a lake that is glittering in the sunlight.))
   (hall1-D1 (you are at the end of the hallway... but at the beginning of another.))
   (hall1-D2 (you find yourself getting tired of hallways...))
   (hall1-D3 (You are in a hallway. You feel like you have been going in circles.))
@@ -89,7 +87,7 @@
 	;;; This is the first floor
 
 	;; Hallway
-	'((hall1-A1 (hall1-1B south hall))
+	'((hall1-A1 (hall1-B1 south hall))
 		(hall1-B1 (hall1-A1 north hall) (hall1-C1 south hall))
 		;;contains the rope
 		(hall1-C1 (hall1-B1 north hall) (hall1-D1 south hall) (room1-C2 east door))
@@ -346,7 +344,7 @@
 (game-action slay weapons dragon hall1-A1
 	(cond 
 	(not(have 'weapons) '(you do not have weapons to slay the dragon with!))
-	(t '(you try to slay the dragon, but he's grumpy! H'es too powerful and you lose. The end.)
+	(t '(you try to slay the dragon but he is grumpy! He is too powerful and you lose. The end.)
     )))
 
 ;;;; action to unlock door at hall2-D3  room2-b1
