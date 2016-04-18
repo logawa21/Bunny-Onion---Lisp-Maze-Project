@@ -90,8 +90,8 @@
 	'((hall1-A1 (hall1-B1 south hall))
 		(hall1-B1 (hall1-A1 north hall) (hall1-C1 south hall))
 		;;contains the rope
-	;;;;(hall1-C1 (hall1-B1 north hall) (hall1-D1 south hall))
-                (hall1-C1 (hall1-B1 north hall) (hall1-D1 south hall) (room1-C2 east door))
+;;;;(hall1-C1 (hall1-B1 north hall) (hall1-D1 south hall) (room1-C2 east door))
+                (hall1-C1 (hall1-B1 north hall) (hall1-D1 south hall)
 		(hall1-D1 (hall1-C1 north hall) (hall1-D2 east hall))
 		;;contains the saw
 		(hall1-D2 (hall1-D1 west hall) (hall1-D3 east hall))
@@ -105,7 +105,9 @@
 		
 		;; Not sure how to allow user to jump from the first floor to the second...
 		;; End of the first floor and the room to get to the second floor via ladder
-		(room1-D4 (hall1-D3 west door) (room1-C4 north door) (room1-E4 south door) (hall2-D4 downstairs ladder))
+;;;;;(room1-D4 (hall1-D3 west door) (room1-C4 north door) (room1-E4 south door) (hall2-D4 downstairs ladder))
+                (room1-D4 (hall1-D3 west door) (room1-C4 north door) (room1-E4 south door)) 
+                
 		;;contains glue
 		(room1-C4 (room1-D4 south door))
 		;;contains board
@@ -259,7 +261,7 @@
 ;;; This prevents the user from using other commands that we don't
 ;;; want them to use.
 ;;; Added more commands (help h ?) that the user is able to use.
-(defparameter *allowed-commands* '(look walk pickup inventory help h cut unlock eat saw ?))
+(defparameter *allowed-commands* '(look walk pickup inventory help h cut unlock eat saw glue ?))
 
 ;;; This function evaluates the input from the user and checks if it's
 ;;; in the list of allowed commands. Else it prints out a comment
@@ -315,6 +317,21 @@
 			(eq subject ',subj)
 			(eq object ',obj)
 			(have ',subj))
+		,@body
+		'(i cant ,command like that.)))
+  ;; Make sure that each action's command is added to the list
+  ;; of actions the user can use.
+  (pushnew ',command *allowed-commands*)))
+
+
+;;;This macro allows the user to do cetrain actions with
+;;;a single object versus the previous macro with
+;;;two different objects.
+(defmacro game-use (command obj place &body body)
+	`(progn (defun ,command (object)
+		(if (and (eq *location* ',place)
+			(eq object ',obj)
+			(have ',obj))
 		,@body
 		'(i cant ,command like that.)))
   ;; Make sure that each action's command is added to the list
@@ -415,28 +432,28 @@
 ;;; Error problem
 ;;; Action that creates the ladder
 (game-action create rope board room1-D4
-	(cond 
-              ( (equal *ladder* t)
-                '(you already made the ladder))
-              ((not (equal *two-ropes* t))
-                   '(you did not cut the rope))
-              ((not (equal *board-pieces* t))
-                   '(you did not cut the board))
-               (t (progn (setf *ladder* 't)
-                        '(you created a ladder.)))
-               ))
+    (cond 
+        ( (equal *ladder* t)
+            '(you already made the ladder))
+        ((not (equal *two-ropes* t))
+            '(you did not cut the rope))
+        ((not (equal *board-pieces* t))
+            '(you did not cut the board))
+        (t (progn (setf *ladder* 't)
+            '(you created a ladder.)))))
 
-;;; This is to put the ladder in place... I will have to change this
-;(game-action ladder hall1-D4
-;	(cond ((not *ladder*) '(the bucket has nothing in it.))
-;     ;; Lose the game if you picked up the frog
-;    ((have 'frog) '(the wizard awakens and sees that you stole his frog. 
-;    	he is so upset he banishes you to the 
-;    	netherworlds- you lose! the end.))
-    ;; If you didn't touch the wizard's frog you get a donut.
-    ;; Basically "win" the game.
-;    (t '(the wizard awakens from his slumber and greets you warmly. 
-;    	he hands you the magic low-carb donut- you win! the end.))))
+;;; This is to put the ladder in place and create a new path.
+(game-use glue magical-glue room1-D4
+    (cond
+         ((not (equal *ladder* t))
+          '(you did not make the ladder yet.))
+         ((not (have 'magical-glue))
+          '(you do not have the magical-glue.))
+    ;; Make sure that the game knows completed
+    ;; the cutting and tells the user too
+    (t (progn (new-path room1-D4 down hall2-D4 ladder)
+           (new-path hall2-D4 up room1-D4 ladder)
+    	    '(success)))))
 
 ;;; This function helps the user by giving them a list of commands that they
 ;;; are allowed to use. h and ? are other commmands that the user can use to
