@@ -259,7 +259,7 @@
 ;;; This prevents the user from using other commands that we don't
 ;;; want them to use.
 ;;; Added more commands (help h ?) that the user is able to use.
-(defparameter *allowed-commands* '(look walk pickup inventory help h cut unlock eat saw glue ?))
+(defparameter *allowed-commands* '(look walk pickup inventory help h cut unlock1 unlock2 unlock3 unlock4 eat saw glue ?))
 
 ;;; This function evaluates the input from the user and checks if it's
 ;;; in the list of allowed commands. Else it prints out a comment
@@ -336,12 +336,70 @@
 		;; of actions the user can use.
 		(pushnew ',command *allowed-commands*)))
 
+
+
+
+
 ;;;; parameters to check if door is unlocked
 (defparameter *unlocked1* nil)
+;;;; action to unlock door at hall2-D3  room2-b1
+(game-use unlock1 key1 hall2-D3
+ 	(cond
+ 		((not(equal *unlocked1* t))
+      		'(the door is still locked.))
+	 	((not (have 'key1))
+      		'(you do not have key1))
+    	;; Make sure that the game knows completed
+	;; unlocking the first door
+	 (t (progn (setf *unlocked1* 't)
+         (new-path hall2-D3 south room2-E3 door)
+         (new-path room2-E3 north hall2-D3 door)
+    	'(the door has been unlocked)))))
+
 (defparameter *unlocked2* nil)
+(game-use unlock2 key2 hall1-C1
+	(cond
+    		((not(equal *unlocked2* t))
+	 	'(the door is still locked.))
+    		((not (have 'key2))
+      		'(you do not have key1))
+    	;; Make sure that the game knows completed
+    	;; unlocking the first door
+    	(t (progn (setf *unlocked2* 't)
+         	(new-path hall1-C1 south room1-C2 door)
+         	(new-path room1-C2 north hall1-C1 door)
+    		'(the door has been unlocked)))))
+
 (defparameter *unlocked3* nil)
+;;;; action to unlock door at hall2-B4
+(game-use unlock3 key3 hall2-B4
+ 	(cond
+    		((not(equal *unlocked3* t))
+      		'(the door is still locked.))
+    		((not (have 'key3))
+      		'(you do not have key3))
+    	;; Make sure that the game knows completed
+    	;; unlocking the first door
+    	(t (progn (setf *unlocked3* 't)
+         	(new-path hall2-B4 south room2-A4 door)
+         	(new-path room2-A4 north hall2-B4 door)
+    		'(the door has been unlocked)))))
+
 (defparameter *unlocked4* nil)
-(defparameter *eaten* nil)
+;;;; action to unlock door at hall1-A1
+(game-use unlock key4 hall1-A1
+	(cond
+    		((not(equal *unlocked4* t))
+      		'(the door is still locked.))
+    		((not (have 'key4))
+      		'(you do not have key4))
+	;; Make sure that the game knows completed
+    	;; unlocking the first door
+    	(t (progn (setf *unlocked4* 't)
+    		'(the door has been unlocked! You win the game!)))))
+
+
+
 
 ;;;; action to eat salad
 (game-action eat salad myself room2-A4
@@ -358,39 +416,6 @@
 		(not(have 'weapons) '(you do not have weapons to slay the dragon with!))
 		(t '(you try to slay the dragon but he is grumpy! He is too powerful and you lose. The end.))
 		))
-
-;;;; action to unlock door at hall2-D3  room2-b1
-(game-action unlock key1 lock1 hall2-D3
-	(if (and (have 'key1) (not *unlocked1*))
-	;; Make sure that the game knows completed
-	(progn (setf *unlocked1* 't)
-		'(the door to room2-E3 has been unlocked)
-		(pushnew '(hall1-C1 (hall1-B1 north hall) (hall1-D1 south hall) (room1-C2 east door)) *edges*))
-	'(you do not have key1.)))
-
-;;;; action to unlock door at hall1-C1
-(game-action unlock key2 lock2 hall1-C1
-	(if (and (have 'key2) (not *unlocked2*))
-	;; Make sure that the game knows completed
-	(progn (setf *unlocked2* 't)
-		'(the door to room1-C2 has been unlocked))
-	'(you do not have key2.)))
-
-;;;; action to unlock door at hall2-B4
-(game-action unlock key3 lock3 hall2-B4
-	(if (and (have 'key3) (not *unlocked3*))
-	;; Make sure that the game knows completed
-	(progn (setf *unlocked3* 't)
-		'(the door to room2-A4 has been unlocked))
-	'(you do not have key3.)))
-
-;;;; action to unlock door at hall1-A1
-(game-action unlock key4 lock4 hall1-A1
-	(if (and (have 'key4) (not *unlocked4*))
-	;; Make sure that the game knows completed
-	(progn (setf *unlocked4* 't)
-		'(The exit has been unlocked.))
-	'(you do not have key4.)))
 
 ;;; Basically check if the rope has been cut into two pieces
 (defparameter *two-ropes* nil)
