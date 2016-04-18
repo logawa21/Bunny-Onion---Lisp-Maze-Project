@@ -90,7 +90,8 @@
 	'((hall1-A1 (hall1-B1 south hall))
 		(hall1-B1 (hall1-A1 north hall) (hall1-C1 south hall))
 		;;contains the rope
-		(hall1-C1 (hall1-B1 north hall) (hall1-D1 south hall) (room1-C2 east door))
+	;;;;(hall1-C1 (hall1-B1 north hall) (hall1-D1 south hall))
+                (hall1-C1 (hall1-B1 north hall) (hall1-D1 south hall) (room1-C2 east door))
 		(hall1-D1 (hall1-C1 north hall) (hall1-D2 east hall))
 		;;contains the saw
 		(hall1-D2 (hall1-D1 west hall) (hall1-D3 east hall))
@@ -106,9 +107,9 @@
 		;; End of the first floor and the room to get to the second floor via ladder
 		(room1-D4 (hall1-D3 west door) (room1-C4 north door) (room1-E4 south door) (hall2-D4 downstairs ladder))
 		;;contains glue
-		(room1-C4 (room1-D4 north door))
+		(room1-C4 (room1-D4 south door))
 		;;contains board
-		(room1-E4 (room1-D4 south door))
+		(room1-E4 (room1-D4 north door))
 		
 		;;; This is the second floor
 
@@ -258,7 +259,7 @@
 ;;; This prevents the user from using other commands that we don't
 ;;; want them to use.
 ;;; Added more commands (help h ?) that the user is able to use.
-(defparameter *allowed-commands* '(look walk pickup inventory help h ? unlock eat))
+(defparameter *allowed-commands* '(look walk pickup inventory help h cut unlock eat saw ?))
 
 ;;; This function evaluates the input from the user and checks if it's
 ;;; in the list of allowed commands. Else it prints out a comment
@@ -320,9 +321,6 @@
   ;; of actions the user can use.
   (pushnew ',command *allowed-commands*)))
 
-;;; Basically check if the rope has been cut into two pieces
-(defparameter *two-ropes* nil)
-
 ;;;; parameters to check if door is unlocked
 (defparameter *unlocked1* nil)
 (defparameter *unlocked2* nil)
@@ -353,7 +351,9 @@
     ;; Make sure that the game knows completed
     ;; 
     (progn (setf *unlocked1* 't)
-    	'(the door to room2-E3 has been unlocked))
+    	'(the door to room2-E3 has been unlocked)
+         (pushnew '(hall1-C1 (hall1-B1 north hall) (hall1-D1 south hall) (room1-C2 east door)) *edges*)
+        )
     '(you do not have key1.)))
 
 ;;;; action to unlock door at hall1-C1
@@ -383,6 +383,9 @@
     	'(The exit has been unlocked.))
     '(you do not have key4.)))
 
+;;; Basically check if the rope has been cut into two pieces
+(defparameter *two-ropes* nil)
+
 ;;; Action that cuts the rope using the saw
 (game-action cut saw rope room1-D4
 	(if (and (have 'rope) (not *two-ropes*))
@@ -390,13 +393,14 @@
     ;; the cutting and tells the user too
     (progn (setf *two-ropes* 't)
     	'(the rope is now cut into two pieces.))
+;;        (push (list 'two-ropes 'body) *object-locations*))
     '(you do not have a rope or a saw.)))
 
 ;;; Basically check if the board has been cut into multiple pieces
 (defparameter *board-pieces* nil)
 
 ;;; Action that cuts the board into pieces
-(game-action cut saw board room1-D4
+(game-action saw saw board room1-D4
 	(if (and (have 'board) (not *board-pieces*))
     ;; Make sure that the game knows completed
     ;; the cutting and tells the user too
@@ -410,13 +414,17 @@
 ;;; Not sure it I can have two items in the have....will have to test
 ;;; Error problem
 ;;; Action that creates the ladder
-(game-action create two-ropes board-pieces room1-D4
-	(if (and (have 'two-ropes 'board-pieces) (not *ladder*))
-    ;; Make sure that the game knows completed
-    ;; putting the ladder together and tells the user too
-    (progn (setf *ladder* 't)
-    	'(the two-ropes and board-pieces have become a ladder.))
-    '(you do not have two-ropes or board-pieces.)))
+(game-action create rope board room1-D4
+	(cond 
+              ( (equal *ladder* t)
+                '(you already made the ladder))
+              ((not (equal *two-ropes* t))
+                   '(you did not cut the rope))
+              ((not (equal *board-pieces* t))
+                   '(you did not cut the board))
+               (t (progn (setf *ladder* 't)
+                        '(you created a ladder.)))
+               ))
 
 ;;; This is to put the ladder in place... I will have to change this
 ;(game-action ladder hall1-D4
