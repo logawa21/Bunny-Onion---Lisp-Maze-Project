@@ -37,8 +37,8 @@
 (defparameter *nodes* 
   ;; Basically a list of places and a short blurb about that area.
   ;; rooms for the first floor
-  '((room1-A2 (You are in a room filled with books with papers littering the floor. You wonder what could have happened here.))       
-  (room1-B2 (You are in a small dimly lit room. Nothing catches your eye in particular.))             
+  '((room1-A2 (You are in a room filled with books with papers littering the floor. You wonder what could have happened here.))
+  (room1-B2 (You are in a small dimly lit room. Nothing catches your eye in particular.))
   (room1-C2 (You are in a dark room with al the draperies closed. You pull them aside and peer out the window. You see another tower.))           
   (room1-C4 (You are in a well lit room. You look out the window to see another tower with dark windows.))
   (room1-D4 (you are in a room with a hole in the floor.))
@@ -91,7 +91,8 @@
 		(hall1-B1 (hall1-A1 north hall) (hall1-C1 south hall))
 		;;contains the rope
 ;;;;(hall1-C1 (hall1-B1 north hall) (hall1-D1 south hall) (room1-C2 east door))
-                (hall1-C1 (hall1-B1 north hall) (hall1-D1 south hall)
+		(hall1-C1 (hall1-B1 north hall) (hall1-D1 south hall))
+		(hall1-C1 (hall1-B1 north hall) (hall1-D1 south hall))
 		(hall1-D1 (hall1-C1 north hall) (hall1-D2 east hall))
 		;;contains the saw
 		(hall1-D2 (hall1-D1 west hall) (hall1-D3 east hall))
@@ -106,8 +107,9 @@
 		;; Not sure how to allow user to jump from the first floor to the second...
 		;; End of the first floor and the room to get to the second floor via ladder
 ;;;;;(room1-D4 (hall1-D3 west door) (room1-C4 north door) (room1-E4 south door) (hall2-D4 downstairs ladder))
-                (room1-D4 (hall1-D3 west door) (room1-C4 north door) (room1-E4 south door)) 
-                
+		(room1-D4 (hall1-D3 west door) (room1-C4 north door) (room1-E4 south door)) 
+		(room1-D4 (hall1-D3 west door) (room1-C4 north door) (room1-E4 south door)) 
+
 		;;contains glue
 		(room1-C4 (room1-D4 south door))
 		;;contains board
