@@ -120,10 +120,10 @@
 		(hall2-C2 (hall2-D2 south hall) (hall2-B2 north hall) (room2-C1 west hall))
 		(hall2-B2 (hall2-C2 south hall) (hall2-B3 east hall) (room2-A2 north hall))
 		(hall2-B3 (hall2-B2 west hall) (hall2-B4 east hall))
-		(hall2-B4 (hall2-B3 west hall) (room2-A4 north door))
+		(hall2-B4 (hall2-B3 west hall))
 		
 		;; Small closet room, also locked, contains hall1-A1 key/key4
-		;;;;(room2-E3 (hall2-D3 north door))
+		(room2-E3 (hall2-D3 north door))
 
 		;; Next room contains a key and trap object... I think it was weapons to
 		;; "slay" the dragon
@@ -139,7 +139,7 @@
 		(room2-A1 (room2-A2 east door))
 
 		;; The salad
-		;;;;(room2-A4 (hall2-B4 south door))
+		(room2-A4 (hall2-B4 south door))
 		))
 
 ;;; This function puts the information in *edges* into basic sentences
@@ -349,26 +349,25 @@
       		'(you do not have key1))
     	;; Make sure that the game knows completed
 	;; unlocking the first door
-	((have 'key1)
-	 (progn (setf *unlocked1* 't)
-         (new-path hall2-D3 south room2-E3 door)
-         (new-path room2-E3 north hall2-D3 door)
-    	'(the door has been unlocked)))
-    	(t '(the door is still locked))))
+		((have 'key1)
+	 	(progn (setf *unlocked1* 't)
+         	(new-path hall2-D3 south room2-E3 door)
+    		'(the door has been unlocked)))
+    		(t '(the door is still locked))))
 
 (defparameter *unlocked2* nil)
 (game-use unlock2 key2 hall1-C1
 	(cond
     		((not (have 'key2))
       		'(you do not have key1))
-    	;; Make sure that the game knows completed
-    	;; unlocking the first door
-    	((have 'key2)
-    	(progn (setf *unlocked2* 't)
-         	(new-path hall1-C1 south room1-C2 door)
-         	(new-path room1-C2 north hall1-C1 door)
-    		'(the door has been unlocked)))
-    		(t '(the door is still locked))))
+    		;; Make sure that the game knows completed
+    		;; unlocking the first door
+    		((have 'key2)
+    		(progn (setf *unlocked2* 't)
+         		(new-path hall1-C1 east room1-C2 door)
+         		(new-path room1-C2 west hall1-C1 door)
+    			'(the door has been unlocked)))
+    			(t '(the door is still locked))))
 
 (defparameter *unlocked3* nil)
 ;;;; action to unlock door at hall2-B4
@@ -376,14 +375,13 @@
  	(cond
     		((not (have 'key3))
       		'(you do not have key3))
-    	;; Make sure that the game knows completed
-    	;; unlocking the first door
-    	((have 'key3)
-    	(progn (setf *unlocked3* 't)
-         	(new-path hall2-B4 south room2-A4 door)
-         	(new-path room2-A4 north hall2-B4 door)
-    		'(the door has been unlocked)))
-    		(t '(the door is still unlocked))))
+    		;; Make sure that the game knows completed
+    		;; unlocking the first door
+    		((have 'key3)
+    		(progn (setf *unlocked3* 't)
+         		(new-path hall2-B4 north room2-A4 door)
+    			'(the door has been unlocked)))
+    			(t '(the door is still unlocked))))
 
 (defparameter *unlocked4* nil)
 ;;;; action to unlock door at hall1-A1
@@ -391,22 +389,22 @@
 	(cond
     		((not (have 'key4))
       		'(you do not have key4))
-	;; Make sure that the game knows completed
-    	;; unlocking the first door
-    	((have 'key4)
-    	(progn (setf *unlocked4* 't)
-    		'(the door has been unlocked! You win the game!)))))
+		;; Make sure that the game knows completed
+    		;; unlocking the first door
+    		((have 'key4)
+    		(progn (setf *unlocked4* 't)
+    			'(the door has been unlocked! You win the game!)))))
 
 
 
-
+(defparameter *eaten* nil)
 ;;;; action to eat salad
-(game-action eat salad myself room2-A4
+(game-use eat salad room2-A4
 	(if (and (have 'salad) (not *eaten*))
-	;; Make sure that the game knows completed
-	(progn (setf *eaten* 't)
-		'(you have eaten the salad))
-	'(you either do not have the salad or are not in room2-A4.)))
+		;; Make sure that the game knows completed
+		(progn (setf *eaten* 't)
+			'(you have eaten the salad and you lose!))
+		'(you either do not have the salad or are not in room2-A4.)))
 
 ;;;; Action that tries to "slay" the dragon
 ;;;;needs testing
