@@ -90,7 +90,6 @@
 	'((hall1-A1 (hall1-B1 south hall))
 		(hall1-B1 (hall1-A1 north hall) (hall1-C1 south hall))
 		;;contains the rope
-;;;;(hall1-C1 (hall1-B1 north hall) (hall1-D1 south hall) (room1-C2 east door))
 		(hall1-C1 (hall1-B1 north hall) (hall1-D1 south hall))
 		(hall1-D1 (hall1-C1 north hall) (hall1-D2 east hall))
 		;;contains the saw
@@ -105,7 +104,6 @@
 		
 		;; Not sure how to allow user to jump from the first floor to the second...
 		;; End of the first floor and the room to get to the second floor via ladder
-;;;;;(room1-D4 (hall1-D3 west door) (room1-C4 north door) (room1-E4 south door) (hall2-D4 downstairs ladder))
 		(room1-D4 (hall1-D3 west door) (room1-C4 north door) (room1-E4 south door)) 
 
 		;;contains glue
@@ -117,15 +115,15 @@
 
 		;; Second floor hallway
 		(hall2-D4 (hall2-D3 west hall))
-		(hall2-D3 (hall2-D4 east hall) (hall2-D2 west hall) (room2-E3 south door))
+		(hall2-D3 (hall2-D4 east hall) (hall2-D2 west hall))
 		(hall2-D2 (hall2-D3 east hall) (hall2-C2 north hall))
 		(hall2-C2 (hall2-D2 south hall) (hall2-B2 north hall) (room2-C1 west hall))
 		(hall2-B2 (hall2-C2 south hall) (hall2-B3 east hall) (room2-A2 north hall))
 		(hall2-B3 (hall2-B2 west hall) (hall2-B4 east hall))
-		(hall2-B4 (hall2-B3 west hall) (room2-A4 north door) (room2-A4 north hall))
+		(hall2-B4 (hall2-B3 west hall) (room2-A4 north door))
 		
 		;; Small closet room, also locked, contains hall1-A1 key/key4
-		(room2-E3 (hall2-D3 north door))
+	;;;;(room2-E3 (hall2-D3 north door))
 		
 		;; Next room contains a key and trap object... I think it was weapons to
 		;; "slay" the dragon
@@ -141,7 +139,7 @@
 		(room2-A1 (room2-A2 east door))
 
 		;; The salad
-		(room2-A4 (hall2-B4 south door))
+	;;;;(room2-A4 (hall2-B4 south door))
 		))
 
 ;;; This function puts the information in *edges* into basic sentences
