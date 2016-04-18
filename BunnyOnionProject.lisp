@@ -345,57 +345,56 @@
 ;;;; action to unlock door at hall2-D3  room2-b1
 (game-use unlock1 key1 hall2-D3
  	(cond
- 		((not(equal *unlocked1* t))
-      		'(the door is still locked.))
 	 	((not (have 'key1))
       		'(you do not have key1))
     	;; Make sure that the game knows completed
 	;; unlocking the first door
-	 (t (progn (setf *unlocked1* 't)
+	((have 'key1)
+	 (progn (setf *unlocked1* 't)
          (new-path hall2-D3 south room2-E3 door)
          (new-path room2-E3 north hall2-D3 door)
-    	'(the door has been unlocked)))))
+    	'(the door has been unlocked)))
+    	(t '(the door is still locked))))
 
 (defparameter *unlocked2* nil)
 (game-use unlock2 key2 hall1-C1
 	(cond
-    		((not(equal *unlocked2* t))
-	 	'(the door is still locked.))
     		((not (have 'key2))
       		'(you do not have key1))
     	;; Make sure that the game knows completed
     	;; unlocking the first door
-    	(t (progn (setf *unlocked2* 't)
+    	((have 'key2)
+    	(progn (setf *unlocked2* 't)
          	(new-path hall1-C1 south room1-C2 door)
          	(new-path room1-C2 north hall1-C1 door)
-    		'(the door has been unlocked)))))
+    		'(the door has been unlocked)))
+    		(t '(the door is still locked))))
 
 (defparameter *unlocked3* nil)
 ;;;; action to unlock door at hall2-B4
 (game-use unlock3 key3 hall2-B4
  	(cond
-    		((not(equal *unlocked3* t))
-      		'(the door is still locked.))
     		((not (have 'key3))
       		'(you do not have key3))
     	;; Make sure that the game knows completed
     	;; unlocking the first door
-    	(t (progn (setf *unlocked3* 't)
+    	((have 'key3)
+    	(progn (setf *unlocked3* 't)
          	(new-path hall2-B4 south room2-A4 door)
          	(new-path room2-A4 north hall2-B4 door)
-    		'(the door has been unlocked)))))
+    		'(the door has been unlocked)))
+    		(t '(the door is still unlocked))))
 
 (defparameter *unlocked4* nil)
 ;;;; action to unlock door at hall1-A1
 (game-use unlock key4 hall1-A1
 	(cond
-    		((not(equal *unlocked4* t))
-      		'(the door is still locked.))
     		((not (have 'key4))
       		'(you do not have key4))
 	;; Make sure that the game knows completed
     	;; unlocking the first door
-    	(t (progn (setf *unlocked4* 't)
+    	((have 'key4)
+    	(progn (setf *unlocked4* 't)
     		'(the door has been unlocked! You win the game!)))))
 
 
