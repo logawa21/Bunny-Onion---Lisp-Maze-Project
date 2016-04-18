@@ -92,7 +92,6 @@
 		;;contains the rope
 ;;;;(hall1-C1 (hall1-B1 north hall) (hall1-D1 south hall) (room1-C2 east door))
 		(hall1-C1 (hall1-B1 north hall) (hall1-D1 south hall))
-		(hall1-C1 (hall1-B1 north hall) (hall1-D1 south hall))
 		(hall1-D1 (hall1-C1 north hall) (hall1-D2 east hall))
 		;;contains the saw
 		(hall1-D2 (hall1-D1 west hall) (hall1-D3 east hall))
@@ -107,7 +106,6 @@
 		;; Not sure how to allow user to jump from the first floor to the second...
 		;; End of the first floor and the room to get to the second floor via ladder
 ;;;;;(room1-D4 (hall1-D3 west door) (room1-C4 north door) (room1-E4 south door) (hall2-D4 downstairs ladder))
-		(room1-D4 (hall1-D3 west door) (room1-C4 north door) (room1-E4 south door)) 
 		(room1-D4 (hall1-D3 west door) (room1-C4 north door) (room1-E4 south door)) 
 
 		;;contains glue
