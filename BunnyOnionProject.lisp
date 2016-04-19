@@ -361,6 +361,7 @@
          		(new-path hall2-B4 north room2-A4 door)
     			'(the door has been unlocked)))
     			(t '(the door is still unlocked))))
+    			
 (defparameter *full* nil)
 ;;;; action to eat salad
 (game-use eat salad room2-A4
@@ -385,6 +386,8 @@
                         '(you do not have the salad to give to the dragon. He is hungry!))
                 ((equal *full* t)
 			'(you already ate the salad! you lose!))
+		((equal *eaten* t)
+			'(you already fed the dragon.))
 		(t (progn (setf *eaten* 't)
                  	'(you give the salad to the dragon. He is happy!)))))
 
