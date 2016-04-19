@@ -33,42 +33,43 @@
 ;;; These are the nodes of the places the user can visit. This just
 ;;; gives a short description to the user so that they know where
 ;;; they are in the game. It also may give some information about
-;;; what is around them, possibly for a more immersive play?
+;;; what is around them.
 (defparameter *nodes* 
-	;; Basically a list of places and a short blurb about that area.
+	;; A list of places and a short blurb about that area.
 	;; rooms for the first floor
 	'((room1-A2 (You are in a room filled with books with papers littering the floor. You wonder what could have happened here.))
 		(room1-B2 (You are in a small dimly lit room. Nothing catches your eye in particular.))
-		(room1-C2 (You are in a dark room with al the draperies closed. You pull them aside and peer out the window. You see another tower.))           
+		(room1-C2 (You are in a dark room with all the draperies closed. You pull them aside and peer out to see another tower.))          
 		(room1-C4 (You are in a well lit room. You look out the window to see another tower with dark windows.))
-		(room1-D4 (you are in a room with a hole in the floor.))
-		(room1-E4 (you are in a room filled with portraits... none of them look familiar.))
+		(room1-D4 (You are in a room with a hole in the floor.))
+		(room1-E4 (You are in a room filled with portraits... none of them look familiar.))
 
 		;; rooms for the second floow
-		(room2-A1 (you are in a very dark room with a strange smell coming from somewhere. You inch forward. The hair rises on the back of your neck as your foot hits something.))
-		(room2-A2 (you are in a dimly lit room. The air is very still.))
-		(room2-A4 (you are in a kitchen.))
-		(room2-B1 (you are in some sort of dungeon.))
-		(room2-C1 (you are in a room with many doors.))
-		(room2-D1 (you are in the room with a furnace but there is no fire. ))
-		(room2-E3 (you find yourself in a room glowing with treasures. You realize you dont have pockets...))
+		(room2-A1 (You are in a very dark room with a strange smell coming from somewhere. The hair rises on the back of your neck as your foot hits something.))
+		(room2-A2 (You are in a dimly lit room. The air is very still.))
+		(room2-A4 (You are in a kitchen.))
+		(room2-B1 (You are in some sort of dungeon.))
+		(room2-C1 (You are in a room with more doors!))
+		(room2-D1 (You are in the room with a furnace but there is no fire. ))
+		(room2-E3 (You find yourself in a room glowing with treasures. You realize you dont have pockets...))
 
 
 		;; hallway nodes for the first floor
 		(hall1-A1 (You are facing a dragon which is blocking your only exit.))
-		(hall1-B1 (you are at the beginning of a long hallway. You can feel the dragons eyes on you.))
-		(hall1-C1 (you are in the middle of a long hallway. You look out the windows to see a lake that is glittering in the sunlight.))
-		(hall1-D1 (you are at the end of the hallway... but at the beginning of another.))
-		(hall1-D2 (you find yourself getting tired of hallways...))
+		(hall1-B1 (You find yourself at the beginning of a long hallway. You can feel the dragons eyes on you.))
+		(hall1-C1 (You are in the middle of a long hallway. You see a lake outside the window. There is a lock on a door to the east with a 2 on it.))
+		(hall1-D1 (You are at the end of the hallway... but at the beginning of another.))
+		(hall1-D2 (You find yourself getting tired of hallways...))
 		(hall1-D3 (You are in a hallway. You feel like you have been going in circles.))
 
 
 		;; hallway nodes for the second floor
-		(hall2-B2 (You find yourself in a hallway.))
+		(hall2-B2 (There are yet more doors as you move down the hallway.))
 		(hall2-B3 (You are in a hall. You feel the air getting cooler.))
-		(hall2-C2 (You are in a hall with many doors.))
+                (hall2-B4 (You are at the end of another hall. Something smells good! There is a lock on a door to the north with a 3 on it.))
+		(hall2-C2 (You are surrounded by many doors.))
 		(hall2-D2 (You are in a dimly lit hallway.))
-		(hall2-D3 (You find yourself in a short hallway.))
+		(hall2-D3 (You find yourself in a short hallway. There is a lock on a door to the south with a 1 on it.))
 		(hall2-D4 (You are at the beginning of another hallway. You wonder what happened to the original ladder that was here.))
 		)) 
 
@@ -82,34 +83,32 @@
 (defparameter *edges* 
 	;; A list defining where the user is currently at and what areas they can reach,
 	;; where that area can be reached and how to get there. (i.e. if the user is in 
-	;; the attic, they can reach the living room downstairs via a ladder.)
+	;; the first flooe, they can reach the second floor downstairs via a ladder.)
 	
 	;;; This is the first floor
-
 	;; Hallway
 	'((hall1-A1 (hall1-B1 south hall))
 		(hall1-B1 (hall1-A1 north hall) (hall1-C1 south hall))
-		;;contains the rope
+		;; Contains the rope
 		(hall1-C1 (hall1-B1 north hall) (hall1-D1 south hall))
 		(hall1-D1 (hall1-C1 north hall) (hall1-D2 east hall))
-		;;contains the saw
+		;; Contains the saw
 		(hall1-D2 (hall1-D1 west hall) (hall1-D3 east hall))
 		(hall1-D3 (hall1-D2 west hall) (room1-D4 east hall))
 		
 		;; First room, locked need key
 		(room1-C2 (hall1-C1 west door) (room1-B2 north door))
 		(room1-B2 (room1-C2 south door) (room1-A2 north door))
-		;;contains room2-E3 key/key3
+		;; Contains room2-E3 key/key3
 		(room1-A2 (room1-B2 south door))
 		
-		;; Not sure how to allow user to jump from the first floor to the second...
-		;; End of the first floor and the room to get to the second floor via ladder
-		(room1-D4 (hall1-D3 west door) (room1-C4 north door) (room1-E4 south door)) 
 
-		;;contains glue
+		;; Contains glue
 		(room1-C4 (room1-D4 south door))
-		;;contains board
+		;; Contains board
 		(room1-E4 (room1-D4 north door))
+		;; End of the first floor and the room to get to the second floor via ladder
+		(room1-D4 (hall1-D3 west door) (room1-C4 north door) (room1-E4 south door))
 		
 		;;; This is the second floor
 
@@ -124,21 +123,20 @@
 		
 		;; Small closet room, also locked, contains hall1-A1 key/key4
 		(room2-E3 (hall2-D3 north door))
-
-		;; Next room contains a key and trap object... I think it was weapons to
-		;; "slay" the dragon
+                
+                ;; Leads up to a room that contains weapons to "slay" the dragon with
 		(room2-C1 (hall2-C2 east door) (room2-D1 south door) (room2-B1 north door))
-		;;contains weapons
+		;; Contains weapons
 		(room2-D1 (room2-C1 north door))
-		;;contains hall2-E3 key/key1
+		;; Contains hall2-E3 key/key1
 		(room2-B1 (room2-C1 south door))
 
 		;; This is a smaller room on the second floor, contains a key
 		(room2-A2 (hall2-B2 south door) (room2-A1 west door))
-		;;contains hall1-C2 key/key2
+		;; Contains hall1-C2 key/key2
 		(room2-A1 (room2-A2 east door))
 
-		;; The salad
+		;; The "kitchen" room with a salad
 		(room2-A4 (hall2-B4 south door))
 		))
 
@@ -153,25 +151,19 @@
 (defun describe-paths (location edges)
 	(apply #'append (mapcar #'describe-path (cdr (assoc location edges)))))
 
-;;; Create all the objects that the user can pick up
-;;; Added a multi-part object to go fishing, because I imagine that a wizard
-;;; lives somewhere that is not easily accessed by others and would therefore
-;;; have to procure his own food. This wizard is probably also bored and needed
-;;; a hobby.
-;;; Added parts of a coffee maker so the wizard can take some coffee while fishing.
+;;; A list that creates all the objects that the user can pick up
 (defparameter *objects* '(key1 key2 key3 key4 rope board saw magical-glue salad weapons))
 
 ;;; Where each object can be found
-
 (defparameter *object-locations* 
 	'((rope hall1-C1)
 		(saw hall1-D2)
 		(magical-glue room1-C4)
 		(board room1-E4)
 		(weapons room2-D1)
-		(key1 room2-B1)     ;; key for 
-		(key2 room2-A1)     ;; key for hall1-C1 to enter room1-C2
-		(key3 room1-A2)     ;; key for hall2-B4 to enter room2-A4
+		(key1 room2-B1)     ;; key to use in hall2-D3 for room2-E3
+		(key2 room2-A1)     ;; key to use in hall1-C1 for room1-C2
+		(key3 room1-A2)     ;; key to use in hall2-B4 for room2-A4
 		(salad room2-A4)    
 		(key4 room2-E3)))   ;; key for hall1-A1 to exit game
 
@@ -179,8 +171,8 @@
 ;;; location.
 (defun objects-at (loc objs obj-loc)
 	(labels ((is-at (obj)
-	(eq (cadr (assoc obj obj-loc)) loc)))								; Check if the object is at the current location
-	(remove-if-not #'is-at objs)))										; Remove objects not at the current location
+	(eq (cadr (assoc obj obj-loc)) loc)))	; Check if the object is at the current location
+	(remove-if-not #'is-at objs)))		; Remove objects not at the current location
 
 ;;; This function describes where an item is at the current location.
 (defun describe-objects (loc objs obj-loc)
@@ -198,22 +190,22 @@
 ;;; current location.
 (defun look ()
 	(append
-	(describe-location *location* *nodes*)								; Description of the current location.
-	(describe-paths *location* *edges*)									; Where they can go from this location.
-	(describe-objects *location* *objects* *object-locations*)))		; What objects or items are at this location
+	(describe-location *location* *nodes*)				; Description of the current location.
+	(describe-paths *location* *edges*)				; Where they can go from this location.
+	(describe-objects *location* *objects* *object-locations*)))	; What objects or items are at this location
 
 ;;; This function basically moves the user to the area they wish to move
 ;;; to given a direction.
 (defun walk (direction)
-	(labels ((correct-way (edge)										; Check to see if the path exists
+	(labels ((correct-way (edge)						; Check to see if the path exists
 		(eq (cadr edge) direction)))
 	(let ((next (find-if #'correct-way (cdr (assoc *location* *edges*)))))
 	;; Tell the user that they can't go that way if that path does not
 	;; exist.
-	(if next 															; If they can go...
-	(progn (setf *location* (car next))									; Move to the desired location.
-	(look))																; Give them a descriptions of what's there.
-	'(you cannot go that way.)))))										; Else they can't go that way.
+	(if next 								; If they can go...
+	(progn (setf *location* (car next))					; Move to the desired location.
+          (look))								; Give them a descriptions of what's there.
+	'(you cannot go that way.)))))						; Else they can't go that way.
 
 ;;; This function allows the user to pick up an object at the current location.
 (defun pickup (object)
@@ -231,10 +223,8 @@
 (defun have (object)
 	(member object (cdr (inventory))))
 
-;;;; The Wizard's World Part 2
-;;;;
-;;;; Comment these sections and test the following code.
-;;;; Can you break it? What tests will you run to find out?
+;;; Some of the functions below are incorporated from the
+;;; wizards World part 2.
 
 ;;; This function REPL, basically it reads, evaluates, and prints in a
 ;;; loop.
@@ -242,24 +232,24 @@
 ;;; the game without having to type parentheses or quotes a.k.a.
 ;;; better game play.
 (defun game-repl ()
-	(let ((cmd (game-read)))											; Reads the game
-	(unless (eq (car cmd) 'quit)										; End the game by typing in quit
-	(game-print (game-eval cmd))										; This evaluates the commands and prints the appropriates response(s)
-	(game-repl))))														; Loop so you can continue playing.
+	(let ((cmd (game-read)))				; Reads the game
+	(unless (eq (car cmd) 'quit)				; End the game by typing in quit
+	(game-print (game-eval cmd))				; This evaluates the commands and prints the appropriates response(s)
+	(game-repl))))						; Loop so you can continue playing.
 
 ;;; This function reads the users input and removes the need to type
 ;;; parentheses or quotes.
 (defun game-read ()
 	(let ((cmd (read-from-string (concatenate 'string "(" (read-line) ")"))))	; Read the user's input and put's it within parentheses
-	(flet ((quote-it (x)														; I believe this lets you quote things without having to type it
+	(flet ((quote-it (x)								; I believe this lets you quote things without having to type it
 		(list 'quote x)))
 	(cons (car cmd) (mapcar #'quote-it (cdr cmd))))))
 
 ;;; These are the possible commands that the user is allowed to use.
 ;;; This prevents the user from using other commands that we don't
 ;;; want them to use.
-;;; Added more commands (help h ?) that the user is able to use.
-(defparameter *allowed-commands* '(look walk pickup inventory help h cut unlock1 unlock2 unlock3 unlock4 eat saw glue ?))
+;;; The commands (help h ?) prints a list of usable commands that the user is able to use.
+(defparameter *allowed-commands* '(look walk pickup inventory cut unlock1 unlock2 unlock3 unlock4 eat saw glue give slay help h ?))
 
 ;;; This function evaluates the input from the user and checks if it's
 ;;; in the list of allowed commands. Else it prints out a comment
@@ -274,11 +264,12 @@
 	;; file it doesn't work... so back to the original plan of two other
 	;; functions tahat call the help function
 	;(if (or (eq sexp "h") (eq sexp "?"))
-	;(eval help)														; If the command is h or ? then call the help function
+	;(eval help)
+        ; If the command is h or ? then call the help function
 
-	(if (member (car sexp) *allowed-commands*)							; Check if it's within the allowed parameters
-	(eval sexp)															; Evaluates the command
-	'(i do not know that command.)))									; Return this if it's not within the parameters
+	(if (member (car sexp) *allowed-commands*)	; Check if it's within the allowed parameters
+	(eval sexp)					; Evaluates the command
+	'(i do not know that command.)))		; Return this if it's not within the parameters
 
 ;;; This function helps the game-print function with editing the
 ;;; responses printed to the user.
@@ -290,7 +281,7 @@
 			((member item '(#\! #\? #\.)) (cons item (tweak-text rest t lit)))		; Is it a ! ? or . for proper punctuation
 			((eql item #\") (tweak-text rest caps (not lit)))
 			(lit (cons item (tweak-text rest nil lit)))
-			(caps (cons (char-upcase item) (tweak-text rest nil lit)))				; Change to uppercase
+			(caps (cons (char-upcase item) (tweak-text rest nil lit)))			; Change to uppercase
 			(t (cons (char-downcase item) (tweak-text rest nil nil)))))))			; Change to lowercase
 
 ;;; This function prints the responses to the users commands after editing
@@ -301,14 +292,11 @@
 	(fresh-line))
 
 
-;;;; The Wizard's World Part 3
-;;;; Creating SPELS in Wizard's World
-;;;; This is from the code titled "wizard_special_actions.lisp"
-;;;; I believe that this code came from the Land of Lisp book and as such
-;;;; I do not own any of it.
 
-;;; This macro allows the user to do certain actions with the
-;;; in-game objects
+;;;; This is from the code titled "wizard_special_actions.lisp" from the 
+;;;; Wizard's World Part 3 in the course textbook.
+
+;;; This macro allows the user to do certain actions with the in-game objects
 (defmacro game-action (command subj obj place &body body)
 	`(progn (defun ,command (subject object)
 		(if (and (eq *location* ',place)
@@ -336,9 +324,25 @@
 		;; of actions the user can use.
 		(pushnew ',command *allowed-commands*)))
 
+;;; This macro creates a path from one location to another.
+;;; if the user wants a 2-way path they have to do this macro twice.
+(defmacro new-path (start direction destination via)
+	`(cond
+	;; Make sure both locations exist and if not let the user know.
+	((not (or (assoc ',start *nodes*) (assoc ',destination *nodes*)))
+		'(I'm sorry but one or both of the locations do not exist.))
+    
+	;; Make sure that the path they want to create doesn't already exist
+	;; Used the following site for the code below:
+	;; http://www2.hawaii.edu/~jgarces/ICS313/jgarces5/jgarces5.lisp
+	((member ',direction (mapcar #'cadr (cdr (assoc ',start *edges*))))
+		'(I'm sorry but that path already exists.))
 
-
-
+	;; If both locations exist and a path doesn't already exist between them
+	;; create a path.
+	((nconc (assoc ',start *edges*) (list (list ',destination ',direction ',via)))
+		'(the new via was added.))
+	))
 
 ;;;; parameters to check if door is unlocked
 (defparameter *unlocked1* nil)
@@ -385,10 +389,14 @@
 
 (defparameter *unlocked4* nil)
 ;;;; action to unlock door at hall1-A1
-(game-use unlock key4 hall1-A1
+(game-use unlock4 key4 hall1-A1
 	(cond
     		((not (have 'key4))
-      		'(you do not have key4))
+                        '(you do not have key4))
+                ((not (have 'key4))
+                        '(you do not have key4))
+                ((not (equal *eaten* t))
+			'(you did not feed the dragon!))
 		;; Make sure that the game knows completed
     		;; unlocking the first door
     		((have 'key4)
@@ -410,9 +418,19 @@
 ;;;;needs testing
 (game-action slay weapons dragon hall1-A1
 	(cond
-		(not(have 'weapons) '(you do not have weapons to slay the dragon with!))
-		(t '(you try to slay the dragon but he is grumpy! He is too powerful and you lose. The end.))
+		( (not(have 'weapons)) 
+                 '(you do not have weapons to slay the dragon with!))
+		(t '(you try to slay the dragon but he destroys all your weapons! Looks like its back to waiting for Prince Charming... you lose!))
 		))
+
+;;;; Action that gives the salad to the dragon.
+(game-action give salad dragon hall1-A1
+	(cond
+		( (not(have 'salad)) 
+                 '(you do not have the salad to give to the dragon. He is hungry!))
+		(t (progn (setf *eaten* 't)
+                 '(you give the salad to the dragon. He is happy!))
+		)))
 
 ;;; Basically check if the rope has been cut into two pieces
 (defparameter *two-ropes* nil)
@@ -424,7 +442,6 @@
 	;; the cutting and tells the user too
 	(progn (setf *two-ropes* 't)
 		'(the rope is now cut into two pieces.))
-		;;(push (list 'two-ropes 'body) *object-locations*))
 		'(you do not have a rope or a saw.)))
 
 ;;; Basically check if the board has been cut into multiple pieces
@@ -537,32 +554,4 @@
 		(push '(,location) *edges*)
 		'(the ,location location was added.))))
 
-;;; This macro creates a path from one location to another.
-;;; I know we were supposed to be able to make 2-way paths and 1-way paths...
-;;; Sadly I was only able to make it create a single path at a time. So if the
-;;; user wants a 2-way path they have to do this macro twice.
-(defmacro new-path (start direction destination via)
-	`(cond
-	;; Make sure both locations exist and if not let the user know.
-	((not (or (assoc ',start *nodes*) (assoc ',destination *nodes*)))
-		'(I'm sorry but one or both of the locations do not exist.))
-    
-	;; Make sure that the path they want to create doesn't already exist
-	;; Used the following site for the code below since assoc wasn't cutting
-	;; it for making sure the path didn't already exist.
-	;; http://www2.hawaii.edu/~jgarces/ICS313/jgarces5/jgarces5.lisp
-	((member ',direction (mapcar #'cadr (cdr (assoc ',start *edges*))))
-		'(I'm sorry but that path already exists.))
 
-	;; If both locations exist and a path doesn't already exist between them
-	;; create a path.
-	((nconc (assoc ',start *edges*) (list (list ',destination ',direction ',via)))
-		'(the new via was added.))
-
-	;; Probably needs some sort of loop to change the direction to the opposite one
-	;; but I wasn't too sure how to make it optional so that the user has to the 
-	;; option of creating a 1-way or 2-way path. Perhaps a new parameter passed through
-	;; the macro that checks for 1 or 2 and then branch off into everything else?
-	;((nconc (assoc ',destination *edges*) (list (list ',start ',direction ',via)))
-	; '(the new via was added.))
-	))
