@@ -361,30 +361,13 @@
          		(new-path hall2-B4 north room2-A4 door)
     			'(the door has been unlocked)))
     			(t '(the door is still unlocked))))
-
-(defparameter *unlocked4* nil)
-;;;; action to unlock door at hall1-A1
-(game-use unlock4 key4 hall1-A1
-	(cond
-    		((not (have 'key4))
-                        '(you do not have key4))
-                ((not (have 'key4))
-                        '(you do not have key4))
-                ((not (equal *eaten* t))
-			'(you did not feed the dragon!))
-		;; Make sure that the game knows completed
-    		;; unlocking the first door
-    		((have 'key4)
-    			(progn (setf *unlocked4* 't)
-    			'(the door has been unlocked! You win the game!)))))
-
-(defparameter *eaten* nil)
+(defparameter *full* nil)
 ;;;; action to eat salad
 (game-use eat salad room2-A4
-	(if (and (have 'salad) (not *eaten*))
+	(if (and (have 'salad) (not *full*))
 		;; Make sure that the game knows completed
-		(progn (setf *eaten* 't)
-			'(you have eaten the salad and you lose!))
+		(progn (setf *full* 't)
+			'(you have eaten the salad!))
 		'(you either do not have the salad or are not in room2-A4.)))
 
 ;;;; Action that tries to "slay" the dragon
@@ -399,10 +382,28 @@
 (game-action give salad dragon hall1-A1
 	(cond
 		( (not(have 'salad)) 
-                	'(you do not have the salad to give to the dragon. He is hungry!))
+                        '(you do not have the salad to give to the dragon. He is hungry!))
+                ((equal *full* t)
+			'(you already ate the salad! you lose!))
 		(t (progn (setf *eaten* 't)
-                	'(you give the salad to the dragon. He is happy!)))))
+                 	'(you give the salad to the dragon. He is happy!)))))
 
+(defparameter *unlocked4* nil)
+;;;; action to unlock door at hall1-A1
+(game-use unlock4 key4 hall1-A1
+	(cond
+                ((not (have 'key4))
+                        '(you do not have key4))
+                ((equal *full* t)
+			'(you already ate the salad! you lose!))
+                ((not (equal *eaten* t))
+			'(you did not feed the dragon!))
+		;; Make sure that the game knows completed
+    		;; unlocking the first door
+    		((have 'key4)
+    		(progn (setf *unlocked4* 't)
+    			'(the door has been unlocked! You win the game!)))))
+    			
 ;;; Basically check if the rope has been cut into two pieces
 (defparameter *two-ropes* nil)
 ;;; Action that cuts the rope using the saw
