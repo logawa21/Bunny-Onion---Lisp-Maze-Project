@@ -1,16 +1,16 @@
 ;;;; -*- Mode: LISP; Syntax: Common-lisp; Package: USER; Base: 10 -*-
-;;;; Group Name: Bunny Onion          Date: April 15, 2016
+;;;; Group Name: Bunny Onion          Date: April 18, 2016
 ;;;; Members: Jacob Dalton, Lauren Ogawa, Michele Takasato
 ;;;; Course: ICS313                   Assignment: 6 (Project)
 ;;;; File name: <BunnyOnionProject.lisp>
 ;;;;
-;;;; The Wizard's World
-;;;; The following code is from the wizards_part1.lisp and 
-;;;; wizards_part1.lisp code.
-;;;; It has been commented and modified so that there is a new
-;;;; location and item in the game. It has been further modified
+;;;; Some of the following code snippets are borrowed and modified 
+;;;; from the Wizards World game from the course textbook.
+;;;;
+;;;; It has been commented and modified so that there are new
+;;;; locations and items in the game. It has been further modified
 ;;;; so that there is a mulit-part object, with at least one part
-;;;; in every area.
+;;;; in different areas.
 ;;;;
 ;;;; Ignore this. This is for my personal use to load the file easily.
 ;;;; (load "BunnyOnionProject.lisp")
@@ -53,7 +53,6 @@
 		(room2-D1 (You are in the room with a furnace but there is no fire. ))
 		(room2-E3 (You find yourself in a room glowing with treasures. You realize you dont have pockets...))
 
-
 		;; hallway nodes for the first floor
 		(hall1-A1 (You are facing a dragon which is blocking your only exit.))
 		(hall1-B1 (You find yourself at the beginning of a long hallway. You can feel the dragons eyes on you.))
@@ -62,7 +61,6 @@
 		(hall1-D2 (You find yourself getting tired of hallways...))
 		(hall1-D3 (You are in a hallway. You feel like you have been going in circles.))
 
-
 		;; hallway nodes for the second floor
 		(hall2-B2 (There are yet more doors as you move down the hallway.))
 		(hall2-B3 (You are in a hall. You feel the air getting cooler.))
@@ -70,20 +68,18 @@
 		(hall2-C2 (You are surrounded by many doors.))
 		(hall2-D2 (You are in a dimly lit hallway.))
 		(hall2-D3 (You find yourself in a short hallway. There is a lock on a door to the south with a 1 on it.))
-		(hall2-D4 (You are at the beginning of another hallway. You wonder what happened to the original ladder that was here.))
-		)) 
+		(hall2-D4 (You are at the beginning of another hallway. You wonder what happened to the original ladder that was here.)))) 
 
 ;;; This is the function that prints out a description of the current
 ;;; location using the one of the nodes above.
 (defun describe-location (location nodes)
 	(cadr (assoc location nodes)))
 
-;;; This is a list telling us what is connected to what. This is
-;;; basically shaping the "room/space" of each area.
+;;; This is a list telling us what edges are connected to which nodes.
 (defparameter *edges* 
 	;; A list defining where the user is currently at and what areas they can reach,
 	;; where that area can be reached and how to get there. (i.e. if the user is in 
-	;; the first flooe, they can reach the second floor downstairs via a ladder.)
+	;; the first floor, they can reach the second floor downstairs via a ladder.)
 	
 	;;; This is the first floor
 	;; Hallway
@@ -102,7 +98,6 @@
 		;; Contains room2-E3 key/key3
 		(room1-A2 (room1-B2 south door))
 		
-
 		;; Contains glue
 		(room1-C4 (room1-D4 south door))
 		;; Contains board
@@ -137,8 +132,7 @@
 		(room2-A1 (room2-A2 east door))
 
 		;; The "kitchen" room with a salad
-		(room2-A4 (hall2-B4 south door))
-		))
+		(room2-A4 (hall2-B4 south door))))
 
 ;;; This function puts the information in *edges* into basic sentences
 ;;; to tell the user what, where, and how to reach other areas in the
@@ -200,11 +194,10 @@
 	(labels ((correct-way (edge)						; Check to see if the path exists
 		(eq (cadr edge) direction)))
 	(let ((next (find-if #'correct-way (cdr (assoc *location* *edges*)))))
-	;; Tell the user that they can't go that way if that path does not
-	;; exist.
+	;; Tell the user that they can't go that way if that path does not exist.
 	(if next 								; If they can go...
 	(progn (setf *location* (car next))					; Move to the desired location.
-          (look))								; Give them a descriptions of what's there.
+          	(look))								; Give them a descriptions of what's there.
 	'(you cannot go that way.)))))						; Else they can't go that way.
 
 ;;; This function allows the user to pick up an object at the current location.
@@ -223,11 +216,7 @@
 (defun have (object)
 	(member object (cdr (inventory))))
 
-;;; Some of the functions below are incorporated from the
-;;; wizards World part 2.
-
-;;; This function REPL, basically it reads, evaluates, and prints in a
-;;; loop.
+;;; This function REPL, basically it reads, evaluates, and prints in a loop.
 ;;; Basically this calls the other functions below it so we can play 
 ;;; the game without having to type parentheses or quotes a.k.a.
 ;;; better game play.
@@ -256,17 +245,9 @@
 ;;; telling the user that they basically can't use that command because
 ;;; it's not in the approved list of commmands they can use.
 (defun game-eval (sexp)
-
 	;; Since the function help exists, we only need to check for h and ?
 	;; This statement checks if the command typed in is h or ? and then
 	;; calls the help function
-	;; Originally this worked...then when I'm putting together my output
-	;; file it doesn't work... so back to the original plan of two other
-	;; functions tahat call the help function
-	;(if (or (eq sexp "h") (eq sexp "?"))
-	;(eval help)
-        ; If the command is h or ? then call the help function
-
 	(if (member (car sexp) *allowed-commands*)	; Check if it's within the allowed parameters
 	(eval sexp)					; Evaluates the command
 	'(i do not know that command.)))		; Return this if it's not within the parameters
@@ -290,11 +271,6 @@
 (defun game-print (lst)
 	(princ (coerce (tweak-text (coerce (string-trim "() " (prin1-to-string lst)) 'list) t nil) 'string))
 	(fresh-line))
-
-
-
-;;;; This is from the code titled "wizard_special_actions.lisp" from the 
-;;;; Wizard's World Part 3 in the course textbook.
 
 ;;; This macro allows the user to do certain actions with the in-game objects
 (defmacro game-action (command subj obj place &body body)
@@ -341,8 +317,7 @@
 	;; If both locations exist and a path doesn't already exist between them
 	;; create a path.
 	((nconc (assoc ',start *edges*) (list (list ',destination ',direction ',via)))
-		'(the new via was added.))
-	))
+		'(the new via was added.))))
 
 ;;;; parameters to check if door is unlocked
 (defparameter *unlocked1* nil)
@@ -400,10 +375,8 @@
 		;; Make sure that the game knows completed
     		;; unlocking the first door
     		((have 'key4)
-    		(progn (setf *unlocked4* 't)
+    			(progn (setf *unlocked4* 't)
     			'(the door has been unlocked! You win the game!)))))
-
-
 
 (defparameter *eaten* nil)
 ;;;; action to eat salad
@@ -419,22 +392,19 @@
 (game-action slay weapons dragon hall1-A1
 	(cond
 		( (not(have 'weapons)) 
-                 '(you do not have weapons to slay the dragon with!))
-		(t '(you try to slay the dragon but he destroys all your weapons! Looks like its back to waiting for Prince Charming... you lose!))
-		))
+                 	'(you do not have weapons to slay the dragon with!))
+		(t '(you try to slay the dragon but he destroys all your weapons! Looks like its back to waiting for Prince Charming... you lose!))))
 
 ;;;; Action that gives the salad to the dragon.
 (game-action give salad dragon hall1-A1
 	(cond
 		( (not(have 'salad)) 
-                 '(you do not have the salad to give to the dragon. He is hungry!))
+                	'(you do not have the salad to give to the dragon. He is hungry!))
 		(t (progn (setf *eaten* 't)
-                 '(you give the salad to the dragon. He is happy!))
-		)))
+                	'(you give the salad to the dragon. He is happy!)))))
 
 ;;; Basically check if the rope has been cut into two pieces
 (defparameter *two-ropes* nil)
-
 ;;; Action that cuts the rope using the saw
 (game-action cut saw rope room1-D4
 	(if (and (have 'rope) (not *two-ropes*))
@@ -446,7 +416,6 @@
 
 ;;; Basically check if the board has been cut into multiple pieces
 (defparameter *board-pieces* nil)
-
 ;;; Action that cuts the board into pieces
 (game-action saw saw board room1-D4
 	(if (and (have 'board) (not *board-pieces*))
@@ -458,9 +427,6 @@
 
 ;;; Basically check if the ladder has been created
 (defparameter *ladder* nil)
-
-;;; Not sure it I can have two items in the have....will have to test
-;;; Error problem
 ;;; Action that creates the ladder
 (game-action create rope board room1-D4
 	(cond 
