@@ -238,7 +238,7 @@
 ;;; This prevents the user from using other commands that we don't
 ;;; want them to use.
 ;;; The commands (help h ?) prints a list of usable commands that the user is able to use.
-(defparameter *allowed-commands* '(look walk pickup inventory cut unlock1 unlock2 unlock3 unlock4 eat saw glue give slay help h ?))
+(defparameter *allowed-commands* '(look walk pickup inventory unlock1 unlock2 unlock3 unlock4 create cut eat saw glue give slay help h ?))
 
 ;;; This function evaluates the input from the user and checks if it's
 ;;; in the list of allowed commands. Else it prints out a comment
@@ -330,6 +330,8 @@
 	;; unlocking the first door
 		((have 'key1)
 	 	(progn (setf *unlocked1* 't)
+	 		(setf *allowed-commands* (remove 'unlock1 *allowed-commands*))
+	 		(setf *objects* (remove 'key1 *objects*))
          	(new-path hall2-D3 south room2-E3 door)
     		'(the door has been unlocked)))
     		(t '(the door is still locked))))
@@ -343,6 +345,8 @@
     		;; unlocking the first door
     		((have 'key2)
     		(progn (setf *unlocked2* 't)
+    			(setf *allowed-commands* (remove 'unlock2 *allowed-commands*))
+    			(setf *objects* (remove 'key2 *objects*))
          		(new-path hall1-C1 east room1-C2 door)
          		(new-path room1-C2 west hall1-C1 door)
     			'(the door has been unlocked)))
@@ -358,6 +362,8 @@
     		;; unlocking the first door
     		((have 'key3)
     		(progn (setf *unlocked3* 't)
+    			(setf *allowed-commands* (remove 'unlock3 *allowed-commands*))
+    			(setf *objects* (remove 'key3 *objects*))
          		(new-path hall2-B4 north room2-A4 door)
     			'(the door has been unlocked)))
     			(t '(the door is still unlocked))))
@@ -376,7 +382,13 @@
     		;; unlocking the first door
     		((have 'key4)
     			(progn (setf *unlocked4* 't)
-    			'(the door has been unlocked! You win the game!)))))
+    				(setf *allowed-commands* (remove 'unlock4 *allowed-commands*))
+    				(setf *allowed-commands* (remove 'walk *allowed-commands*))
+    				(setf *allowed-commands* (remove 'inventory *allowed-commands*))
+    				(setf *allowed-commands* (remove 'look *allowed-commands*))
+    				(setf *objects* (remove 'key4 *objects*))
+    				(pushnew 'quit *allowed-commands*)
+    				'(the door has been unlocked! You win the game!)))))
 
 (defparameter *eaten* nil)
 ;;;; action to eat salad
@@ -384,6 +396,18 @@
 	(if (and (have 'salad) (not *eaten*))
 		;; Make sure that the game knows completed
 		(progn (setf *eaten* 't)
+			(setf *allowed-commands* (remove 'slay *allowed-commands*))
+			(setf *allowed-commands* (remove 'walk *allowed-commands*))
+			(setf *allowed-commands* (remove 'give *allowed-commands*))
+			(setf *allowed-commands* (remove 'eat *allowed-commands*))
+			(setf *allowed-commands* (remove 'pickup *allowed-commands*))
+			(setf *allowed-commands* (remove 'look *allowed-commands*))
+			(setf *allowed-commands* (remove 'inventory *allowed-commands*))
+			(setf *allowed-commands* (remove 'unlock1 *allowed-commands*))
+			(setf *allowed-commands* (remove 'unlock2 *allowed-commands*))
+			(setf *allowed-commands* (remove 'unlock3 *allowed-commands*))
+			(setf *allowed-commands* (remove 'unlock4 *allowed-commands*))
+			(pushnew 'quit *allowed-commands*)
 			'(you have eaten the salad and you lose!))
 		'(you either do not have the salad or are not in room2-A4.)))
 
@@ -393,7 +417,20 @@
 	(cond
 		( (not(have 'weapons)) 
                  	'(you do not have weapons to slay the dragon with!))
-		(t (and '(you try to slay the dragon but he destroys all your weapons! Looks like its back to waiting for Prince Charming... you lose!) (quit)))))
+		((have 'weapons)
+			(progn (setf *allowed-commands* (remove 'slay *allowed-commands*))
+				(setf *allowed-commands* (remove 'walk *allowed-commands*))
+				(setf *allowed-commands* (remove 'give *allowed-commands*))
+				(setf *allowed-commands* (remove 'eat *allowed-commands*))
+				(setf *allowed-commands* (remove 'pickup *allowed-commands*))
+				(setf *allowed-commands* (remove 'look *allowed-commands*))
+				(setf *allowed-commands* (remove 'inventory *allowed-commands*))
+				(setf *allowed-commands* (remove 'unlock1 *allowed-commands*))
+				(setf *allowed-commands* (remove 'unlock2 *allowed-commands*))
+				(setf *allowed-commands* (remove 'unlock3 *allowed-commands*))
+				(setf *allowed-commands* (remove 'unlock4 *allowed-commands*))
+				(pushnew 'quit *allowed-commands*)
+				'(you try to slay the dragon but he destroys all your weapons! Looks like its back to waiting for Prince Charming... you lose!)))))
 
 ;;;; Action that gives the salad to the dragon.
 (game-action give salad dragon hall1-A1
@@ -401,6 +438,12 @@
 		( (not(have 'salad)) 
                 	'(you do not have the salad to give to the dragon. He is hungry!))
 		(t (progn (setf *eaten* 't)
+			(setf *allowed-commands* (remove 'give *allowed-commands*))
+			(setf *allowed-commands* (remove 'slay *allowed-commands*))
+			(setf *allowed-commands* (remove 'eat *allowed-commands*))
+			(setf *allowed-commands* (remove 'pickup *allowed-commands*))
+			(setf *objects* (remove 'salad *objects*))
+			(setf *objects* (remove 'weapons *objects*))
                 	'(you give the salad to the dragon. He is happy!)))))
 
 ;;; Basically check if the rope has been cut into two pieces
@@ -411,8 +454,9 @@
 	;; Make sure that the game knows completed
 	;; the cutting and tells the user too
 	(progn (setf *two-ropes* 't)
+		(setf *allowed-commands* (remove 'cut *allowed-commands*))
 		'(the rope is now cut into two pieces.))
-		'(you do not have a rope or a saw.)))
+	'(you do not have a rope or a saw.)))
 
 ;;; Basically check if the board has been cut into multiple pieces
 (defparameter *board-pieces* nil)
@@ -422,6 +466,7 @@
 	;; Make sure that the game knows completed
 	;; the cutting and tells the user too
 	(progn (setf *board-pieces* 't)
+		(setf *allowed-commands* (remove 'saw *allowed-commands*))
 		'(the board is now cut into multiple pieces.))
 	'(you do not have a board or a saw.)))
 
@@ -437,6 +482,12 @@
 		((not (equal *board-pieces* t))
 			'(you did not cut the board))
 		(t (progn (setf *ladder* 't)
+			(setf *allowed-commands* (remove 'create *allowed-commands*))
+			(setf *objects* (remove 'saw *objects*))
+			(setf *objects* (remove 'rope *objects*))
+			(setf *objects* (remove 'board *objects*))
+			(new-object ladder room1-D4)
+			(pickup 'ladder)
 			'(you created a ladder.)))))
 
 ;;; This is to put the ladder in place and create a new path.
@@ -449,6 +500,9 @@
 			;; Make sure that the game knows completed
 			;; the cutting and tells the user too
 			(t (progn (new-path room1-D4 down hall2-D4 ladder)
+				(setf *allowed-commands* (remove 'glue *allowed-commands*))
+				(setf *objects* (remove 'magical-glue *objects*))
+				(setf *objects* (remove 'ladder *objects*))
 				(new-path hall2-D4 up room1-D4 ladder)
 				'(success)))))
 
